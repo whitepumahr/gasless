@@ -26,12 +26,6 @@ jobs:
           type: 'zip'
           filename: 'Gasless'
           exclusions: '*.git* .editorconfig tools/* test/* data/'
-      - name: 'Zip data'
-        uses: thedoctor0/zip-release@main
-        with:
-          type: 'zip'
-          filename: 'data'
-          path: './data/'
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
