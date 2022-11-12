@@ -304,6 +304,10 @@ class BuffId(enum.Enum):
     AMORPHOUSARMORCLOUD = 296
     RAVENSHREDDERMISSILEARMORREDUCTIONUISUBTRUCT = 297
     BATTERYOVERCHARGE = 298
+    NYDUSCREEPGROWTH_1 = 300
+    ONCREEP            = 303
+    ONCREEP_2          = 304
+    NYDUSCREEPGROWTH_2 = 306
 
     def __repr__(self):
         return f"BuffId.{self.name}"

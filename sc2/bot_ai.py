@@ -266,7 +266,7 @@ class BotAI(BotAIInternal):
         return closest
 
     # pylint: disable=R0912
-    async def distribute_workers(self, resource_ratio: float = 2):
+    async def distribute_workers(self, resource_ratio: float = 1):
         """
         Distributes workers across all the bases taken.
         Keyword `resource_ratio` takes a float. If the current minerals to gas
