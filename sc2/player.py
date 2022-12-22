@@ -78,7 +78,7 @@ class Bot(AbstractPlayer):
 
 class Computer(AbstractPlayer):
 
-    def __init__(self, race, difficulty=Difficulty.Easy, ai_build=AIBuild.Rush):
+    def __init__(self, race, difficulty=Difficulty.Easy, ai_build=AIBuild.Macro):
         super().__init__(PlayerType.Computer, race, difficulty=difficulty, ai_build=ai_build)
 
     def __str__(self):
