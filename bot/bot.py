@@ -106,6 +106,10 @@ class CompetitiveBot(BotAI):
         print("player 1 or 2", self.player_id)
         print(self.game_info.map_name)
         print(self.expansion_locations_list)
+        global o1p
+        o1p = False
+        global o2p
+        o2p = False
         global o3p
         o3p = False
         global ourmain
@@ -160,12 +164,16 @@ class CompetitiveBot(BotAI):
                 evowall1 = (113.5, 51.5)
                 evowall2 = (118.5, 57.5)
                 wql = (117.8, 55.5)
+                o1p = (58, 150)
+                o2p = (12, 94)
                 o3p = (56, 94)
             else:
                 roachwarrenwall = (35.5, 102.5)
                 evowall1 = (38.5, 104.5)
                 evowall2 = (33.5, 98.5)
                 wql = (34.2, 100.5)
+                o1p = (95, 9)
+                o2p = (62, 139)
                 o3p = (96, 62)
                 
         if self.game_info.map_name == "Hardwire AIE":
@@ -192,13 +200,17 @@ class CompetitiveBot(BotAI):
                 evowall1 = (128.5, 162.5)
                 evowall2 = (130.5, 158.5)
                 wql = (129.8, 160.5)
+                o1p = (44, 80)
+                o2p = (95, 38)
                 o3p = (96, 76)
             else:
                 roachwarrenwall = (90.5, 51.5)
                 evowall1 = (87.5, 53.5)
                 evowall2 = (85.5, 57.5)
                 wql = (86.2, 55.5)
-                o3p = (125, 141)
+                o1p = (170, 140)
+                o2p = (119, 185)
+                o3p = (120, 140)
                 
         if self.game_info.map_name == "Inside and OutAIE":
             print(self.game_info.map_name)
@@ -224,12 +236,16 @@ class CompetitiveBot(BotAI):
                 evowall1 = (97.5, 123.5)
                 evowall2 = (101.5, 122.5)
                 wql = (99.5, 123.8)
+                o1p = (18, 54)
+                o2p = (75, 13)
                 o3p = (62, 60)
             else:
                 roachwarrenwall = (65.5, 34.5)
                 evowall1 = (62.5, 36.5)
                 evowall2 = (58.5, 37.5)
                 wql = (60.5, 36.2)
+                o1p = (142, 107)
+                o2p = (84, 150)
                 o3p = (98, 100)
             
         if self.game_info.map_name == "MoondanceAIE":
@@ -258,12 +274,16 @@ class CompetitiveBot(BotAI):
                 evowall1 = (131.5, 75.5)
                 evowall2 = (126.5, 71.5)
                 wql = (128.5, 71.2)
-                o3p = (69, 113)
+                o1p = (96, 177)
+                o2p = (39, 139)
+                o3p = (68, 112)
             else:
                 roachwarrenwall = (60.5, 128.5)
                 evowall1 = (65.5, 132.5)
                 evowall2 = (61.5, 131.5)
                 wql = (63.5, 132.8)
+                o1p = (97, 30)
+                o2p = (154, 84)
                 o3p = (124, 92)
             
         if self.game_info.map_name == "StargazersAIE":
@@ -290,12 +310,16 @@ class CompetitiveBot(BotAI):
                 evowall1 = (49.5, 96.5)
                 evowall2 = (47.5, 90.5)
                 wql = (47.2, 92.5)
+                o1p = (136, 145)
+                o2p = (172, 82)
                 o3p = (124, 106)
             else:
                 roachwarrenwall = (153.5, 94.5)
                 evowall1 = (150.5, 96.5)
                 evowall2 = (152.5, 90.5)
                 wql = (153.8, 92.5)
+                o1p = (62, 145)
+                o2p = (27, 83)
                 o3p = (76, 106)
             
         if self.game_info.map_name == "WaterfallAIE":
@@ -322,12 +346,16 @@ class CompetitiveBot(BotAI):
                 evowall1 = (85.5, 124.5)
                 evowall2 = (87.5, 121.5)
                 wql = (86.5, 119.5)
+                o1p = (17, 47)
+                o2p = (69, 14)
                 o3p = (62.5, 59.5)
             else:
                 roachwarrenwall = (61.5, 30.5)
                 evowall1 = (58.5, 31.5)
                 evowall2 = (56.5, 34.5)
                 wql = (57.5, 36.5)
+                o1p = (126, 111)
+                o2p = (74, 144)
                 o3p = (81.5, 97.5)
             
         print("possible base locations for this map =", possible_base_locations)
@@ -342,21 +370,7 @@ class CompetitiveBot(BotAI):
         self.units(UnitTypeId.DRONE).closest_to(enemymain).move(enemymain.position.towards(ourmain, 2.8), queue = True)
         self.units(UnitTypeId.DRONE).closest_to(enemymain).move(enemymain.position.towards(enemynat, -2.8), queue = True)
         self.units(UnitTypeId.DRONE).closest_to(enemymain).move(enemymain.position.towards(ourmain, 2.8), queue = True)
-        if self.game_info.map_name == "Berlingrad AIE":
-            self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemy5th, 25))
-        else:
-            if self.in_map_bounds(enemymain.position.towards(enemynat, -35)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -35))
-            elif self.in_map_bounds(enemymain.position.towards(enemynat, -30)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -30))
-            elif self.in_map_bounds(enemymain.position.towards(enemynat, -25)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -25))
-            elif self.in_map_bounds(enemymain.position.towards(enemynat, -20)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -20))
-            elif self.in_map_bounds(enemymain.position.towards(enemynat, -15)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -15))
-            elif self.in_map_bounds(enemymain.position.towards(enemynat, -10)):
-                self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(enemymain.position.towards(enemynat, -10))
+        self.units(UnitTypeId.OVERLORD).closest_to(enemymain).move(Point2(o1p))
 
         self.overlord1tag = self.units(UnitTypeId.OVERLORD).closest_to(enemymain).tag
         self.overlord1 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord1tag)
@@ -859,37 +873,6 @@ class CompetitiveBot(BotAI):
                     )
                 )
         
-#overlordscout
-        if (
-            self.time > 179
-            and self.time < 181
-            ):
-            print(self.time_formatted, self.supply_used, "overlord scout 3min")
-            if enemy_gas_buildings.amount < 1 or scouted == False:
-                if self.overlord1:
-                    self.overlord1.move(enemymain.position.towards(enemynat, -4.5))
-                    self.overlord1.move(enemymain.position.towards(enemynat, -35), queue = True)
-                    scouted == True
-                if self.overlord2:
-                    self.overlord2.move(enemynat.position.towards(enemymain, -4.5))
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24), queue = True)
-                    scouted == True
-                print(self.time_formatted, self.supply_used, "Overlord scout initiated 3:00")
-        if (
-            self.time > 164
-            and self.time < 166
-            ):
-            print(self.time_formatted, self.supply_used, "overlord scout 2:45")
-            if enemy_gas_buildings.amount > 0:
-                if self.overlord1:
-                    self.overlord1.move(enemymain.position.towards(enemynat, -4.5))
-                    self.overlord1.move(enemymain.position.towards(enemynat, -35), queue = True)
-                    scouted == True
-                if self.overlord2:
-                    self.overlord2.move(enemynat.position.towards(enemymain, -4.5))
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24), queue = True)
-                    scouted == True
-                    print(self.time_formatted, self.supply_used, "Overlord scout initiated 2:45")
 #position overlords
         if not self.units(UnitTypeId.OVERLORD):
             return
@@ -902,10 +885,7 @@ class CompetitiveBot(BotAI):
         if self.overlord1tag:
             self.overlord1 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord1tag)
         if self.overlord1 and self.time > 210:
-            if self.game_info.map_name == "Berlingrad AIE":
-                self.overlord1.move(enemymain.position.towards(enemy5th, 25))
-            else:
-                self.overlord1.move(enemymain.position.towards(enemynat, -35))
+            self.overlord1.move(Point2(o1p))
             
         if self.overlord1 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 1 and self.structures(UnitTypeId.LAIR).ready:
             self.overlord1.build(UnitTypeId.OVERSEER)
@@ -920,48 +900,26 @@ class CompetitiveBot(BotAI):
         if self.overlord2tag:
             self.overlord2 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord2tag)
         if self.overlord2:
-            if self.game_info.map_name == "MoondanceAIE":
-                if (
-                    enemy_townhalls.amount > 1
-                    and self.time < 150
-                    ):
-                    self.overlord2.move(enemy3rd.position.towards(enemymain, -24))
-                if self.time < 60:
+            if (
+                enemy_townhalls.amount > 1
+                and self.time < 150
+                ):
+                self.overlord2.move(Point2(o2p))
+            if self.time < 60:
+                self.overlord2.move(enemynat.position.towards(enemymain, -10))
+            if (
+                enemy_gas_buildings.amount > 0
+                and enemy_townhalls.amount < 2
+                ):
+                if self.time < 120:
                     self.overlord2.move(enemynat.position.towards(enemymain, -10))
-                if (
-                    enemy_gas_buildings.amount > 0
-                    and enemy_townhalls.amount < 2
-                    ):
-                    if self.time < 120:
-                        self.overlord2.move(enemynat.position.towards(enemymain, -10))
-                elif (
-                    enemy_gas_buildings.amount < 1
-                    and self.time > 210
-                    or enemy_townhalls.amount > 1
-                    and self.time > 210
-                    ):
-                    self.overlord2.move(enemy3rd.position.towards(enemymain, -24))
-            else:
-                if (
-                    enemy_townhalls.amount > 1
-                    and self.time < 150
-                    ):
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24))
-                if self.time < 60:
-                    self.overlord2.move(enemynat.position.towards(enemymain, -10))
-                if (
-                    enemy_gas_buildings.amount > 0
-                    and enemy_townhalls.amount < 2
-                    ):
-                    if self.time < 120:
-                        self.overlord2.move(enemynat.position.towards(enemymain, -10))
-                elif (
-                    enemy_gas_buildings.amount < 1
-                    and self.time > 210
-                    or enemy_townhalls.amount > 1
-                    and self.time > 210
-                    ):
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24))
+            elif (
+                enemy_gas_buildings.amount < 1
+                and self.time > 210
+                or enemy_townhalls.amount > 1
+                and self.time > 210
+                ):
+                self.overlord2.move(Point2(o2p))
 
         if self.overlord2 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 2 and self.structures(UnitTypeId.LAIR).ready:
             self.overlord2.build(UnitTypeId.OVERSEER)
@@ -2104,7 +2062,7 @@ class CompetitiveBot(BotAI):
             self.closestling = self.units(UnitTypeId.ZERGLING).find_by_tag(self.closestlingtag)
         if self.closestling:
             if (
-                not self.enemy_units.not_flying.closer_than(10, self.closestling).amount > 1
+                not self.enemy_units.not_flying.exclude_type(scouts).closer_than(10, self.closestling).amount > 1
                 and not enemies_near
                 ):
                 if self.closestling in lings:
@@ -2132,7 +2090,7 @@ class CompetitiveBot(BotAI):
                     self.closestlingtag = lings.closest_to(enemymain).tag
                     self.closestling = lings.find_by_tag(self.closestlingtag)
                     if (
-                        not self.enemy_units.not_flying.closer_than(10, self.closestling).amount > 1
+                        not self.enemy_units.not_flying.exclude_type(scouts).closer_than(10, self.closestling).amount > 1
                         and not enemies_near
                         ):
                         lings.remove(self.closestling)
@@ -2157,7 +2115,7 @@ class CompetitiveBot(BotAI):
                     self.closestlingtag = lings.closest_to(enemymain).tag
                     self.closestling = lings.find_by_tag(self.closestlingtag)
                     if (
-                        not self.enemy_units.not_flying.closer_than(10, self.closestling).amount > 1
+                        not self.enemy_units.not_flying.exclude_type(scouts).closer_than(10, self.closestling).amount > 1
                         and not enemies_near
                         ):
                         lings.remove(self.closestling)
@@ -2181,7 +2139,7 @@ class CompetitiveBot(BotAI):
             self.closestling2 = self.units(UnitTypeId.ZERGLING).find_by_tag(self.closestlingtag2)
         if self.closestling2:
             if (
-                not self.enemy_units.not_flying.closer_than(10, self.closestling2).amount > 1
+                not self.enemy_units.not_flying.exclude_type(scouts).closer_than(10, self.closestling2).amount > 1
                 and not enemies_near
                 ):
                 if self.closestling2 in lings:
@@ -2243,7 +2201,7 @@ class CompetitiveBot(BotAI):
                 self.closestling2 = lings.find_by_tag(self.closestlingtag2)
             if self.closestling2:
                 if (
-                    not self.enemy_units.not_flying.closer_than(10, self.closestling2).amount > 1
+                    not self.enemy_units.not_flying.exclude_type(scouts).closer_than(10, self.closestling2).amount > 1
                     and not enemies_near
                     ):
                     lings.remove(self.closestling2)
@@ -2415,8 +2373,14 @@ class CompetitiveBot(BotAI):
                                         ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling))
                                         ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling), queue = True)
                                     else:
-                                        ling.move(self.townhalls.closest_to(ling))
-                                        ling.move(self.townhalls.closest_to(ling), queue = True)
+                                        if not self.townhalls.amount == enemy_townhalls.amount:
+                                            if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
+                                        if self.townhalls.amount == enemy_townhalls.amount:
+                                            if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 2
 
@@ -2735,9 +2699,13 @@ class CompetitiveBot(BotAI):
 #if further away then go to attack formation                                                            
                 for roach in roaches:
                     if roach.position.is_further_than(10, enemies_near.closest_to(roach)) or roach.is_idle:
-                        if enemies_near.closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or stillattacking == True:
+                        if enemy_townhalls.amount < 2 and enemies_near.closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or stillattacking == True:
                             if not roach.order_target == enemies_near.closest_to(roach).tag:
                                 roach.attack(enemies_near.closest_to(roach))
+                        else:
+                            if not roach.order_target == enemies_near.closest_to(roach).tag:
+                                roach.attack(enemies_near.closest_to(roach))
+                        
                         
 #if our army value is better then attack
                 for roach in roaches:
@@ -3796,28 +3764,30 @@ class CompetitiveBot(BotAI):
         print(self.time_formatted, self.supply_used, "our resources", self.minerals, self.vespene)
         print(self.time_formatted, self.supply_used, "our lair", self.already_pending(UnitTypeId.LAIR))
         if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.idle and enemy_townhalls.amount > 1:
-            print(self.time_formatted, self.supply_used, "evo ready", self.minerals, self.vespene)
-            
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL1, can_afford_check = True)
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1) and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL2):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL2, can_afford_check = True)
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2) and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL3):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL3, can_afford_check = True)
+            if enemy_gas_buildings.amount > enemy_townhalls.amount and self.structures(UnitTypeId.LAIR) or enemy_gas_buildings.amount <= enemy_townhalls.amount:
+                print(self.time_formatted, self.supply_used, "evo ready", self.minerals, self.vespene)
                 
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL1, can_afford_check = True)
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL2) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL2, can_afford_check = True)
-            if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL3) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL3):
-                self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL3, can_afford_check = True)
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL1, can_afford_check = True)
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1) and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL2):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL2, can_afford_check = True)
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).is_idle and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2) and not self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL3):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall1)).research(UpgradeId.ZERGGROUNDARMORSLEVEL3, can_afford_check = True)
+                    
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL1, can_afford_check = True)
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL2) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL2, can_afford_check = True)
+                if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).is_idle and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL3) and not self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL3):
+                    self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.closest_to(Point2(evowall2)).research(UpgradeId.ZERGMISSILEWEAPONSLEVEL3, can_afford_check = True)
 
         if not self.already_pending(UpgradeId.GLIALRECONSTITUTION):
             if self.structures(UnitTypeId.ROACHWARREN).ready and self.structures(UnitTypeId.LAIR).ready and self.can_afford(UpgradeId.GLIALRECONSTITUTION):
                 self.structures(UnitTypeId.ROACHWARREN).ready.closest_to(ourmain).research(UpgradeId.GLIALRECONSTITUTION)
 
-        if self.can_afford(UnitTypeId.LAIR)  and self.townhalls.ready and not self.already_pending(UnitTypeId.LAIR) and not self.structures(UnitTypeId.LAIR) and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1) and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1):
-            self.townhalls.closest_to(ourmain).build(UnitTypeId.LAIR)
+        if self.can_afford(UnitTypeId.LAIR) and self.townhalls.ready and not self.already_pending(UnitTypeId.LAIR) and not self.structures(UnitTypeId.LAIR):
+            if self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL1) and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL1) or enemy_gas_buildings.amount > enemy_townhalls.amount:
+                self.townhalls.closest_to(ourmain).build(UnitTypeId.LAIR)
 
         if self.can_afford(UnitTypeId.HYDRALISKDEN) and not self.already_pending(UnitTypeId.HYDRALISKDEN):
             if self.enemy_units.flying.filter(lambda flyer: not flyer.type_id in (UnitTypeId.OVERLORD, UnitTypeId.OVERSEER, UnitTypeId.OBSERVER)):

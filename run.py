@@ -78,7 +78,7 @@ def parse_arguments():
                         help="Computer race. One of [Terran, Zerg, Protoss, Random]. Default is Terran. Only for local play.")
     parser.add_argument("--ComputerDifficulty", type=str, default="CheatInsane",
                         help=f"Computer difficulty. One of [VeryEasy, Easy, Medium, MediumHard, Hard, Harder, VeryHard, CheatVision, CheatMoney, CheatInsane]. Default is VeryEasy. Only for local play.")
-    parser.add_argument("--Map", type=str, default="Berlingrad AIE",
+    parser.add_argument("--Map", type=str, default="StargazersAIE",
                         help="The name of the map to use. Default is 2000AtmospheresAIE. Only for local play.")
     parser.add_argument("--ComputerAi_Build", type=str, default="Rush",
                         help=f"Computer Build. One of [RandomBuild, Rush, Power, Macro, Air, Harder, VeryHard, CheatVision, CheatMoney, CheatInsane]. Default is VeryEasy. Only for local play.")
