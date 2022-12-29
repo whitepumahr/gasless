@@ -438,7 +438,7 @@ class CompetitiveBot(BotAI):
                 need_drones = True
             if base.surplus_harvesters > 0:
                 del local_mineral_workers[:base.ideal_harvesters]
-                spare_mineral_workers.extend(local_mineral_workers)
+                spare_mineral_workers = local_mineral_workers
                 
 
         for base in bases:
@@ -448,37 +448,37 @@ class CompetitiveBot(BotAI):
                     if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
                         worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
                     elif need_drones == False:
-                        worker.gather(self.mineral_field.closest_to(base))
+                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
 #idle worker                    
-            for worker in self.workers.idle:
-                if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
-                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                elif need_drones == False:
-                    worker.gather(self.mineral_field.closest_to(base))
+        for worker in self.workers.idle:
+            if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+            elif need_drones == False:
+                worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
 #fill gas first
-            for gas in gas_buildings:
-                local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
-                if gas.surplus_harvesters < 0:
-                    if self.minerals > self.vespene * 2:
-                        print(self.time_formatted, self.supply_used, "need more workers")
-                        for worker in local_mineral_workers.take(abs(gas.surplus_harvesters)):
-                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                            print(self.time_formatted, self.supply_used, worker)
-                            worker.gather(gas)
-                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                            print(self.time_formatted, self.supply_used, "gathering gas")
-                if gas.surplus_harvesters > 0:
-                    for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
+        for gas in gas_buildings:
+            local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
+            if gas.surplus_harvesters < 0:
+                if self.minerals > self.vespene * 2:
+                    print(self.time_formatted, self.supply_used, "need more workers")
+                    for worker in local_mineral_workers.closest_n_units(gas, 3).take(abs(gas.surplus_harvesters)):
                         print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
                         print(self.time_formatted, self.supply_used, worker)
-                        worker.gather(self.mineral_field.closest_to(base))
-                    print(self.time_formatted, self.supply_used, "Too many gas workers here")
-                if self.vespene > self.minerals * 2 and self.vespene > 200 or self.workers.amount < 9:
-                    for worker in local_gas_workers:
-                        if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
-                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                        elif need_drones == False:
-                            worker.gather(self.mineral_field.closest_to(base))
+                        worker.gather(gas)
+                        print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                        print(self.time_formatted, self.supply_used, "gathering gas")
+            if gas.surplus_harvesters > 0:
+                for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
+                    print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                    print(self.time_formatted, self.supply_used, worker)
+                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                print(self.time_formatted, self.supply_used, "Too many gas workers here")
+            if self.vespene > self.minerals * 2 and self.vespene > self.townhalls.ready.amount * 25 and self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0) and local_gas_workers or self.workers.amount < 9 and local_gas_workers:
+                for worker in local_gas_workers.take(abs(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(gas).surplus_harvesters)):
+                    if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                    elif need_drones == False:
+                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
                     
                         
                     
@@ -2063,12 +2063,6 @@ class CompetitiveBot(BotAI):
                                     queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)), queue = True)
                                     print("queen or enemy is too far away")
                         print(self.time_formatted, self.supply_used, "queen unit defense")
-                if not self.has_creep(queen.position):
-                    if self.townhalls:
-                        if not queen.is_moving:
-                            print("queens gotta move away")
-                            queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3))
-                            queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3), queue = True)
 
             if not enemies_near:
                 if queen.is_idle:
@@ -2382,7 +2376,7 @@ class CompetitiveBot(BotAI):
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 0.5
                                 if (
-                                    self.totalvalue_en >= self.totalvalue_on and not enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(ling))) and not self.units(UnitTypeId.QUEEN)
+                                    self.totalvalue_en > self.totalvalue_on and not enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(ling))) and not self.units(UnitTypeId.QUEEN)
                                     or self.totalvalue_en > self.totalvalue_on and self.units(UnitTypeId.QUEEN)
                                     ):
                                     print("Enemy still has more than lings")
@@ -2406,7 +2400,7 @@ class CompetitiveBot(BotAI):
                                     self.totalvalue_en = self.totalvalue_en * 2
 
                             elif (
-                                self.totalvalue_on > self.totalvalue_en and not queens
+                                self.totalvalue_on >= self.totalvalue_en and not queens
                                 or self.totalvalue_on >= self.totalvalue_en and queens or queens and stillattacking == True
                                 or enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(ling)))
                                 ):
@@ -2421,10 +2415,11 @@ class CompetitiveBot(BotAI):
                                             ling.attack(enemies_near.closest_to(ling), queue = True)
                                             print("lwc", ling.weapon_cooldown)
                                     else:
-                                        if not ling.is_moving:
-                                            print("lwc and ling surrounding", ling.weapon_cooldown)
-                                            ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
-                                            ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
+                                        if enemies_near.closest_to(ling).ground_range > 2:
+                                            if not ling.is_moving:
+                                                print("lwc and ling surrounding", ling.weapon_cooldown)
+                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
+                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                 elif self.units(UnitTypeId.QUEEN) and not roaches:
                                     print("queen and no roach stillattacking?", stillattacking)
                                     if not self.units(UnitTypeId.QUEEN).closest_to(enemies_near.closest_to(ling)).is_attacking and stillattacking == False:
@@ -2440,10 +2435,11 @@ class CompetitiveBot(BotAI):
                                                     ling.attack(enemies_near.closest_to(ling), queue = True)
                                                     print("ling attack enemy combat unit with queen and stillattacking")
                                             else:
-                                                if not ling.is_moving:
-                                                    print("lwc1", ling.weapon_cooldown)
-                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1))
-                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1), queue = True)
+                                                if enemies_near.closest_to(ling).ground_range > 2:
+                                                    if not ling.is_moving:
+                                                        print("lwc and ling surrounding", ling.weapon_cooldown)
+                                                        ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
+                                                        ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                         elif enemies_near.filter(lambda u: u.type_id in [UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE]).closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position):
                                                 print("lwc2", ling.weapon_cooldown)
                                                 ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
@@ -2455,10 +2451,11 @@ class CompetitiveBot(BotAI):
                                                     ling.attack(enemies_near.closest_to(ling), queue = True)
                                                     print("ling attack enemy combat unit with queen or stillattacking")
                                             else:
-                                                if not ling.is_moving:
-                                                    print("lwc3", ling.weapon_cooldown)
-                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1))
-                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1), queue = True)
+                                                if enemies_near.closest_to(ling).ground_range > 2:
+                                                    if not ling.is_moving:
+                                                        print("lwc and ling surrounding", ling.weapon_cooldown)
+                                                        ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
+                                                        ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                             
                                     elif not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3)):
                                         ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
@@ -2477,10 +2474,11 @@ class CompetitiveBot(BotAI):
                                                 ling.attack(enemies_near.closest_to(ling), queue = True)
                                                 print("lwc", ling.weapon_cooldown)
                                         else:
-                                            if not ling.is_moving:
-                                                print("lwc and ling surrounding", ling.weapon_cooldown)
-                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1))
-                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))).position.towards(self.townhalls.in_closest_distance_to_group(enemies_near), -1), queue = True)
+                                            if enemies_near.closest_to(ling).ground_range > 2:
+                                                if not ling.is_moving:
+                                                    print("lwc and ling surrounding", ling.weapon_cooldown)
+                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
+                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                         
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 2
