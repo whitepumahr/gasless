@@ -412,7 +412,6 @@ class CompetitiveBot(BotAI):
         idle_workers = self.workers.idle
         bases = self.townhalls.ready
         gas_buildings = self.gas_buildings.ready
-        spare_mineral_workers = False
         need_drones = False
         local_mineral_workers = Units([], self)
         spare_mineral_workers = Units([], self)
@@ -433,17 +432,20 @@ class CompetitiveBot(BotAI):
 
         for base in bases:
             local_minerals_tags = {mineral.tag for mineral in self.mineral_field if mineral.distance_to(base) <= 8}
-            local_mineral_workers.extend(self.workers.filter(lambda unit: unit.order_target in local_minerals_tags or (unit.is_carrying_minerals and unit.order_target == base.tag)))
+            local_mineral_workers = self.workers.filter(lambda unit: unit.order_target in local_minerals_tags or (unit.is_carrying_minerals and unit.order_target == base.tag))
             if base.surplus_harvesters < 0:
                 need_drones = True
             if base.surplus_harvesters > 0:
                 del local_mineral_workers[:base.ideal_harvesters]
-                spare_mineral_workers = local_mineral_workers
-                
+                print("spare workers", local_mineral_workers.amount)
+                spare_mineral_workers.extend(local_mineral_workers)
+        else:
+            print("all spare workers", spare_mineral_workers.amount)
 
         for base in bases:
 #worker balance
             if base.surplus_harvesters < 0 and spare_mineral_workers:
+                print("these guys", spare_mineral_workers.amount)
                 for worker in spare_mineral_workers.take(abs(base.surplus_harvesters)):
                     if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
                         worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
@@ -456,29 +458,31 @@ class CompetitiveBot(BotAI):
             elif need_drones == False:
                 worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
 #fill gas first
-        for gas in gas_buildings:
-            local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
-            if gas.surplus_harvesters < 0:
-                if self.minerals > self.vespene * 2:
-                    print(self.time_formatted, self.supply_used, "need more workers")
-                    for worker in local_mineral_workers.closest_n_units(gas, 3).take(abs(gas.surplus_harvesters)):
+        for base in bases:
+            local_mineral_workers = self.workers.filter(lambda unit: unit.order_target in local_minerals_tags or (unit.is_carrying_minerals and unit.order_target == base.tag))
+            for gas in gas_buildings.closer_than(10, base):
+                local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
+                if gas.surplus_harvesters < 0:
+                    if self.minerals > self.vespene * 2:
+                        print(self.time_formatted, self.supply_used, "need more workers")
+                        for worker in local_mineral_workers.closest_n_units(gas, 3).take(abs(gas.surplus_harvesters)):
+                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                            print(self.time_formatted, self.supply_used, worker)
+                            worker.gather(gas)
+                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                            print(self.time_formatted, self.supply_used, "gathering gas")
+                if gas.surplus_harvesters > 0:
+                    for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
                         print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
                         print(self.time_formatted, self.supply_used, worker)
-                        worker.gather(gas)
-                        print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                        print(self.time_formatted, self.supply_used, "gathering gas")
-            if gas.surplus_harvesters > 0:
-                for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
-                    print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                    print(self.time_formatted, self.supply_used, worker)
-                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                print(self.time_formatted, self.supply_used, "Too many gas workers here")
-            if self.vespene > self.minerals * 2 and self.vespene > self.townhalls.ready.amount * 25 and self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0) and local_gas_workers or self.workers.amount < 9 and local_gas_workers:
-                for worker in local_gas_workers.take(abs(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(gas).surplus_harvesters)):
-                    if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
                         worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                    elif need_drones == False:
-                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
+                    print(self.time_formatted, self.supply_used, "Too many gas workers here")
+                if self.vespene > self.minerals * 2 and self.vespene > self.townhalls.ready.amount * 25 and self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0) and local_gas_workers or self.workers.amount < 9 and local_gas_workers:
+                    for worker in local_gas_workers.take(abs(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(gas).surplus_harvesters)):
+                        if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                        elif need_drones == False:
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
                     
                         
                     
@@ -492,7 +496,7 @@ class CompetitiveBot(BotAI):
             return
         if not self.supply_workers:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -501,12 +505,12 @@ class CompetitiveBot(BotAI):
                     
         for hatch in self.townhalls:
             if not enemies_near:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
         if self.can_afford(UnitTypeId.DRONE) and self.supply_workers + self.already_pending(UnitTypeId.DRONE) < self.townhalls.amount * 8:
@@ -875,21 +879,21 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: not u.is_flying
                         and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
                 
 #enemy structures near hatcheries
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and s.distance_to(hatch) < 15
                     )
                 )
         
@@ -1471,7 +1475,7 @@ class CompetitiveBot(BotAI):
     async def expand(self):
         if not self.units(UnitTypeId.DRONE):
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         basecount = self.townhalls.amount
 #if early gas aggression, don't expand until they do, if non gas aggression, expand
@@ -1551,7 +1555,7 @@ class CompetitiveBot(BotAI):
                 or self.supply_cap > 199
                 and self.minerals > 1000
                 ):
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(30, ourmain).amount < 1:
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, ourmain).amount < 1:
                     if self.townhalls.closer_than(3, ourmain):
                         self.units(UnitTypeId.DRONE).closest_to(ournat).build(UnitTypeId.HATCHERY, ournat)
                     if self.townhalls.closer_than(3, ournat) and self.townhalls.amount < 3 and self.time > 105 and not enemy_townhalls.closer_than(3, our3rd):
@@ -1593,7 +1597,7 @@ class CompetitiveBot(BotAI):
     async def build_gas(self):
         if not self.units(UnitTypeId.DRONE):
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         for hatch in self.townhalls.ready:
             geysernear = self.vespene_geyser.closer_than(15, hatch).closest_to(hatch)
@@ -1717,7 +1721,7 @@ class CompetitiveBot(BotAI):
     async def build_zerglings(self):
         if not self.larva:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -1726,12 +1730,12 @@ class CompetitiveBot(BotAI):
                     
         for hatch in self.townhalls:
             if not enemies_near:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
         if self.structure_type_build_progress(UnitTypeId.ROACHWARREN) > 0:
@@ -1863,31 +1867,32 @@ class CompetitiveBot(BotAI):
 #enemy units near hatcheries
         for hatch in self.townhalls:
             if self.time < 120:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
             else:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.LARVA)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
                 
 #enemy structures near hatcheries
             print(self.time_formatted, self.supply_used, "enemies near =", enemies_near)
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and not s.type_id == (UnitTypeId.NYDUSCANAL)
+                        and s.distance_to(hatch) < 15
                     )
                 )
             print(self.time_formatted, self.supply_used, "enemies structures near =", enemies_structures_near)
@@ -2866,19 +2871,19 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
 #enemy structures near hatcheries
             print(self.time_formatted, self.supply_used, "enemies near =", enemies_near)
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
-                        lambda s: s.distance_to(hatch) < 40
+                        lambda s: s.distance_to(hatch) < 15
                     )
                 )
             print(self.time_formatted, self.supply_used, "enemies structures near =", enemies_structures_near)
@@ -3161,7 +3166,7 @@ class CompetitiveBot(BotAI):
     async def build_roachwarren(self):
         if not self.units(UnitTypeId.DRONE):
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         roachwarren = self.structures(UnitTypeId.ROACHWARREN)
         if (
@@ -3191,7 +3196,7 @@ class CompetitiveBot(BotAI):
     async def build_roaches(self):
         if not self.larva:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -3199,12 +3204,12 @@ class CompetitiveBot(BotAI):
     
         for hatch in self.townhalls:
             if not enemies_near:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
                     
@@ -3283,7 +3288,7 @@ class CompetitiveBot(BotAI):
     async def build_hydras(self):
         if not self.larva:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -3291,12 +3296,12 @@ class CompetitiveBot(BotAI):
     
         for hatch in self.townhalls:
             if not enemies_near:
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                     enemies_near.extend(
                         self.enemy_units.filter(
                             lambda u: not u.is_flying
                             and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                            and u.distance_to(hatch) < 40
+                            and u.distance_to(hatch) < 20
                         )
                     )
                     
@@ -3402,21 +3407,21 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: not u.is_flying
                         and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
                 
 #enemy structures near hatcheries
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and s.distance_to(hatch) < 15
                     )
                 )
 
@@ -3464,8 +3469,8 @@ class CompetitiveBot(BotAI):
         for hatchery in self.townhalls.ready:
             if self.minerals > 100 and self.supply_used > 198:
                 if self.enemy_structures(UnitTypeId.NYDUSCANAL) and not self.already_pending(UnitTypeId.SPINECRAWLER) > 1 and not self.structures(UnitTypeId.SPINECRAWLER).ready.closer_than(8, self.enemy_structures(UnitTypeId.NYDUSCANAL).closest_to(ourmain)).amount > 1:
-                    await self.build(UnitTypeId.SPINECRAWLER, near = self.enemy_structures(UnitTypeId.NYDUSCANAL).closest_to(ourmain).position.towards(ourmain, 3))
-                elif self.minerals > 500 and not self.structures(UnitTypeId.SPINECRAWLER).ready.closer_than(10, hatchery).amount > 5:
+                    await self.build(UnitTypeId.SPINECRAWLER, near = self.enemy_structures(UnitTypeId.NYDUSCANAL).closest_to(ourmain).position.towards(ourmain, 5))
+                elif self.minerals > 500 and not self.structures(UnitTypeId.SPINECRAWLER).ready.closer_than(12, hatchery).amount > 4:
                     if not hatchery.position.is_closer_than(3, ournat):
                         await self.build(UnitTypeId.SPINECRAWLER, near = hatchery.position.towards(enemynat, 10))
                     if hatchery.position.is_closer_than(3, ournat):
@@ -3538,21 +3543,21 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: not u.is_flying
                         and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
                 
 #enemy structures near hatcheries
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and s.distance_to(hatch) < 15
                     )
                 )
 
@@ -3594,7 +3599,7 @@ class CompetitiveBot(BotAI):
         if not self.units(UnitTypeId.DRONE):
             return
         
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
@@ -3603,21 +3608,21 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: not u.is_flying
                         and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
                 
 #enemy structures near hatcheries
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and s.distance_to(hatch) < 15
                     )
                 )
         if (
@@ -3675,7 +3680,6 @@ class CompetitiveBot(BotAI):
             and enemy_townhalls.amount > 1
             and not self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) > 2
             and not roachwarren.closer_than(3, roachwarrenwall)
-            and not self.already_pending(UnitTypeId.ROACHWARREN)
             ):
             if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
                 self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(roachwarrenwall))
@@ -3685,7 +3689,7 @@ class CompetitiveBot(BotAI):
         if not self.units(UnitTypeId.DRONE):
             return
         
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
@@ -3694,21 +3698,21 @@ class CompetitiveBot(BotAI):
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
-            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(40, hatch):
+            if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, hatch):
                 enemies_near.extend(
                     self.enemy_units.filter(
                         lambda u: not u.is_flying
                         and u.type_id not in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE)
-                        and u.distance_to(hatch) < 40
+                        and u.distance_to(hatch) < 20
                     )
                 )
                 
 #enemy structures near hatcheries
-            if self.enemy_structures.not_flying.closer_than(40, hatch):
+            if self.enemy_structures.not_flying.closer_than(15, hatch):
                 enemies_structures_near.extend(
                     self.enemy_structures.filter(
                         lambda s: not s.is_flying
-                        and s.distance_to(hatch) < 40
+                        and s.distance_to(hatch) < 15
                     )
                 )
         print(self.time_formatted, self.supply_used, "our resources", self.minerals, self.vespene)
