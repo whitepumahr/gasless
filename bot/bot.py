@@ -423,7 +423,7 @@ class CompetitiveBot(BotAI):
             and self.structure_type_build_progress(UnitTypeId.SPAWNINGPOOL) > 0
             ):
             for drone in self.workers.closest_n_units(our3rd, 4):
-                if not drone.is_carrying_minerals and not drone.orders == self.mineral_field.closer_than(3, our3rd).closest_to(ourmain):
+                if not drone.is_carrying_resource and not drone.orders == self.mineral_field.closer_than(3, our3rd).closest_to(ourmain):
                     drone.gather(self.mineral_field.closer_than(3, our3rd).closest_to(ourmain))
                     drone.gather(self.mineral_field.closer_than(3, our3rd).furthest_to(ourmain), queue = True)
                 if drone.is_returning:
@@ -448,40 +448,101 @@ class CompetitiveBot(BotAI):
                 print("these guys", spare_mineral_workers.amount)
                 for worker in spare_mineral_workers.take(abs(base.surplus_harvesters)):
                     if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
-                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res1", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res1", worker.is_carrying_resource)
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
                     elif need_drones == False:
-                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res2", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res2", worker.is_carrying_resource)
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
 #idle worker                    
         for worker in self.workers.idle:
             if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
-                worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                if worker.is_carrying_resource:
+                    print(self.time_formatted, self.supply_used, "returning res3", worker.is_carrying_resource)
+                    worker.return_resource()
+                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)), queue = True)
+                else:
+                    print(self.time_formatted, self.supply_used, "not returning res3", worker.is_carrying_resource)
+                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
             elif need_drones == False:
-                worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
+                if worker.is_carrying_resource:
+                    print(self.time_formatted, self.supply_used, "returning res4", worker.is_carrying_resource)
+                    worker.return_resource()
+                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)), queue = True)
+                else:
+                    print(self.time_formatted, self.supply_used, "not returning res4", worker.is_carrying_resource)
+                    worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
+
 #fill gas first
+        local_mineral_workers = Units([], self)
         for base in bases:
-            local_mineral_workers = self.workers.filter(lambda unit: unit.order_target in local_minerals_tags or (unit.is_carrying_minerals and unit.order_target == base.tag))
-            for gas in gas_buildings.closer_than(10, base):
-                local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
-                if gas.surplus_harvesters < 0:
-                    if self.minerals > self.vespene * 2:
-                        print(self.time_formatted, self.supply_used, "need more workers")
-                        for worker in local_mineral_workers.closest_n_units(gas, 3).take(abs(gas.surplus_harvesters)):
-                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                            print(self.time_formatted, self.supply_used, worker)
-                            worker.gather(gas)
-                            print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
-                            print(self.time_formatted, self.supply_used, "gathering gas")
-                if gas.surplus_harvesters > 0:
-                    for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
+            local_minerals_tags = {mineral.tag for mineral in self.mineral_field if mineral.distance_to(base) <= 8}
+            local_mineral_workers.extend(self.workers.filter(lambda unit: unit.order_target in local_minerals_tags or (unit.is_carrying_minerals and unit.order_target == base.tag)))
+        for gas in gas_buildings:
+            local_gas_workers = self.workers.filter(lambda unit:  unit.order_target == gas.tag or (unit.is_carrying_vespene and unit.order_target == gas.tag))
+            if gas.surplus_harvesters < 0:
+                if self.minerals > self.vespene * 2:
+                    print(self.time_formatted, self.supply_used, "need more workers")
+                    for worker in local_mineral_workers.closest_n_units(gas, 3).take(abs(gas.surplus_harvesters)):
                         print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
                         print(self.time_formatted, self.supply_used, worker)
-                        worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                    print(self.time_formatted, self.supply_used, "Too many gas workers here")
-                if self.vespene > self.minerals * 2 and self.vespene > self.townhalls.ready.amount * 25 and self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0) and local_gas_workers or self.workers.amount < 9 and local_gas_workers:
-                    for worker in local_gas_workers.take(abs(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(gas).surplus_harvesters)):
-                        if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res5", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(gas, queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res5", worker.is_carrying_resource)
+                            worker.gather(gas)
+                        print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                        print(self.time_formatted, self.supply_used, "gathering gas")
+                        break
+            if gas.surplus_harvesters > 0:
+                for worker in local_gas_workers.take(abs(gas.surplus_harvesters)):
+                    print(self.time_formatted, self.supply_used, gas.surplus_harvesters)
+                    print(self.time_formatted, self.supply_used, worker)
+                    if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res6", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res6", worker.is_carrying_resource)
                             worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
-                        elif need_drones == False:
+                    elif need_drones == False:
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res7", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res7", worker.is_carrying_resource)
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
+                print(self.time_formatted, self.supply_used, "Too many gas workers here")
+            if self.vespene > self.minerals * 2 and self.vespene > self.townhalls.ready.amount * 25 and self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0) and local_gas_workers or self.workers.amount < 9 and local_gas_workers:
+                for worker in local_gas_workers.take(abs(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(gas).surplus_harvesters)):
+                    if self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0):
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res8", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res8", worker.is_carrying_resource)
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.filter(lambda t: t.surplus_harvesters < 0).closest_to(worker)))
+                    elif need_drones == False:
+                        if worker.is_carrying_resource:
+                            print(self.time_formatted, self.supply_used, "returning res9", worker.is_carrying_resource)
+                            worker.return_resource()
+                            worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)), queue = True)
+                        else:
+                            print(self.time_formatted, self.supply_used, "not returning res9", worker.is_carrying_resource)
                             worker.gather(self.mineral_field.closest_to(self.townhalls.ready.closest_to(worker)))
                     
                         
@@ -497,6 +558,8 @@ class CompetitiveBot(BotAI):
         if not self.supply_workers:
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -530,7 +593,7 @@ class CompetitiveBot(BotAI):
                 larva.train(UnitTypeId.DRONE)
                 print(self.time_formatted, self.supply_used, "macro 16 hatch")
 #After drone scout determine enemy build and react
-        if self.time > 180:
+        if self.time > 120:
             if enemy_townhalls.amount < 2:
                 stillaggression = True
         if self.time > 46:
@@ -780,6 +843,8 @@ class CompetitiveBot(BotAI):
                                     and self.time > 134
                                     and not enemies_near.amount > 0
                                     and self.supply_workers + self.already_pending(UnitTypeId.DRONE) < 120
+                                    and not stillaggression
+                                    and not self.totalvalue_o < 500
                                     ):
                                     if self.totalvalue_o >= self.totalvalue_e or self.units(UnitTypeId.ZERGLING).amount * 25 + self.already_pending(UnitTypeId.ZERGLING) * 50 + self.units(UnitTypeId.ROACH).amount * 100 + self.already_pending(UnitTypeId.ROACH) * 100  >= self.totalvalue_e:
                                         if hatch.assigned_harvesters + gas.assigned_harvesters + self.already_pending(UnitTypeId.DRONE) < hatch.ideal_harvesters + gas.ideal_harvesters:
@@ -870,7 +935,9 @@ class CompetitiveBot(BotAI):
 
 
     async def build_overlords(self):
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
@@ -1368,7 +1435,9 @@ class CompetitiveBot(BotAI):
 #spawn more overlords
         if not self.larva:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         if self.supply_cap < 200:
@@ -1434,15 +1503,15 @@ class CompetitiveBot(BotAI):
                     ):
                     larva.train(UnitTypeId.OVERLORD)
                     print(self.time_formatted, self.supply_used, "Sixth overlord and beyond")
+                    
             if self.enemyworkers < 15:
                 
                 if (
-                    self.already_pending(UnitTypeId.ROACHWARREN)
-                    or self.structures(UnitTypeId.ROACHWARREN).ready
+                    self.already_pending(UnitTypeId.ROACHWARREN) and self.supply_left <= self.townhalls.ready.amount * 6 + 1
+                    or self.structures(UnitTypeId.ROACHWARREN).ready and self.supply_left <= self.townhalls.ready.amount * 6
                     ):
                     if (
-                        self.supply_left <= self.townhalls.ready.amount * 6
-                        and self.already_pending(UnitTypeId.OVERLORD) < self.townhalls.ready.amount
+                        self.already_pending(UnitTypeId.OVERLORD) < self.townhalls.ready.amount
                         and self.can_afford(UnitTypeId.OVERLORD)
                         ):
                         larva.train(UnitTypeId.OVERLORD)
@@ -1476,6 +1545,8 @@ class CompetitiveBot(BotAI):
         if not self.units(UnitTypeId.DRONE):
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         basecount = self.townhalls.amount
 #if early gas aggression, don't expand until they do, if non gas aggression, expand
@@ -1511,38 +1582,39 @@ class CompetitiveBot(BotAI):
                 or self.supply_cap > 199
                 and self.minerals > 1000
                 ):
-                if self.enemy_units.not_flying.closer_than(30, ourmain).amount < 1:
-                    if self.townhalls.closer_than(3, ourmain) and self.time > 105:
-                        self.units(UnitTypeId.DRONE).closest_to(ournat).build(UnitTypeId.HATCHERY, ournat)
-                    if self.townhalls.closer_than(3, ournat) and self.townhalls.amount < 3 and not enemy_townhalls.closer_than(3, our3rd):
-                        self.units(UnitTypeId.DRONE).closest_to(our3rd).build(UnitTypeId.HATCHERY, our3rd)
-                    if self.townhalls.closer_than(3, our3rd) and self.townhalls.amount < 4 and not enemy_townhalls.closer_than(3, our4th):
-                        self.units(UnitTypeId.DRONE).closest_to(our4th).build(UnitTypeId.HATCHERY, our4th)
-                    if self.townhalls.closer_than(3, our4th) and self.townhalls.amount < 5 and not enemy_townhalls.closer_than(3, our5th):
-                        self.units(UnitTypeId.DRONE).closest_to(our5th).build(UnitTypeId.HATCHERY, our5th)
-                    if self.townhalls.closer_than(3, our5th) and self.townhalls.amount < 6 and not enemy_townhalls.closer_than(3, our6th):
-                        self.units(UnitTypeId.DRONE).closest_to(our6th).build(UnitTypeId.HATCHERY, our6th)
-                    if self.townhalls.closer_than(3, our6th) and self.townhalls.amount < 7 and not enemy_townhalls.closer_than(3, our7th):
-                        self.units(UnitTypeId.DRONE).closest_to(our7th).build(UnitTypeId.HATCHERY, our7th)
-                    if self.townhalls.closer_than(3, our7th) and self.townhalls.amount < 8 and not enemy_townhalls.closer_than(3, our8th):
-                        self.units(UnitTypeId.DRONE).closest_to(our8th).build(UnitTypeId.HATCHERY, our8th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 9 and not enemy_townhalls.closer_than(3, our9th):
-                            self.units(UnitTypeId.DRONE).closest_to(our9th).build(UnitTypeId.HATCHERY, our9th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, our9th) and self.townhalls.amount < 10 and not enemy_townhalls.closer_than(3, enemy9th):
-                            self.units(UnitTypeId.DRONE).closest_to(enemy9th).build(UnitTypeId.HATCHERY, enemy9th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, enemy9th) and self.townhalls.amount < 11 and not enemy_townhalls.closer_than(3, enemy8th):
-                            self.units(UnitTypeId.DRONE).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
-                    if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 12 and not self.townhalls.closer_than(3, enemy8th) and not enemy_townhalls.closer_than(3, enemy8th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
-                    if self.townhalls.closer_than(3, enemy8th) and self.townhalls.amount < 13 and not self.townhalls.closer_than(3, enemy7th) and not enemy_townhalls.closer_than(3, enemy7th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy7th).build(UnitTypeId.HATCHERY, enemy7th)
-                    if self.townhalls.closer_than(3, enemy7th) and self.townhalls.amount < 14 and not self.townhalls.closer_than(3, enemy6th) and not enemy_townhalls.closer_than(3, enemy6th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy6th).build(UnitTypeId.HATCHERY, enemy6th)
-                    if self.townhalls.closer_than(3, enemy6th) and self.townhalls.amount < 15 and not self.townhalls.closer_than(3, enemy5th) and not enemy_townhalls.closer_than(3, enemy5th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy5th).build(UnitTypeId.HATCHERY, enemy5th)
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                    if self.enemy_units.not_flying.closer_than(30, ourmain).amount < 1:
+                        if self.townhalls.closer_than(3, ourmain) and self.time > 105:
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ournat).build(UnitTypeId.HATCHERY, ournat)
+                        if self.townhalls.closer_than(3, ournat) and self.townhalls.amount < 3 and not enemy_townhalls.closer_than(3, our3rd):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our3rd).build(UnitTypeId.HATCHERY, our3rd)
+                        if self.townhalls.closer_than(3, our3rd) and self.townhalls.amount < 4 and not enemy_townhalls.closer_than(3, our4th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our4th).build(UnitTypeId.HATCHERY, our4th)
+                        if self.townhalls.closer_than(3, our4th) and self.townhalls.amount < 5 and not enemy_townhalls.closer_than(3, our5th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our5th).build(UnitTypeId.HATCHERY, our5th)
+                        if self.townhalls.closer_than(3, our5th) and self.townhalls.amount < 6 and not enemy_townhalls.closer_than(3, our6th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our6th).build(UnitTypeId.HATCHERY, our6th)
+                        if self.townhalls.closer_than(3, our6th) and self.townhalls.amount < 7 and not enemy_townhalls.closer_than(3, our7th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our7th).build(UnitTypeId.HATCHERY, our7th)
+                        if self.townhalls.closer_than(3, our7th) and self.townhalls.amount < 8 and not enemy_townhalls.closer_than(3, our8th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our8th).build(UnitTypeId.HATCHERY, our8th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 9 and not enemy_townhalls.closer_than(3, our9th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our9th).build(UnitTypeId.HATCHERY, our9th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, our9th) and self.townhalls.amount < 10 and not enemy_townhalls.closer_than(3, enemy9th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy9th).build(UnitTypeId.HATCHERY, enemy9th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, enemy9th) and self.townhalls.amount < 11 and not enemy_townhalls.closer_than(3, enemy8th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
+                        if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 12 and not self.townhalls.closer_than(3, enemy8th) and not enemy_townhalls.closer_than(3, enemy8th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
+                        if self.townhalls.closer_than(3, enemy8th) and self.townhalls.amount < 13 and not self.townhalls.closer_than(3, enemy7th) and not enemy_townhalls.closer_than(3, enemy7th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy7th).build(UnitTypeId.HATCHERY, enemy7th)
+                        if self.townhalls.closer_than(3, enemy7th) and self.townhalls.amount < 14 and not self.townhalls.closer_than(3, enemy6th) and not enemy_townhalls.closer_than(3, enemy6th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy6th).build(UnitTypeId.HATCHERY, enemy6th)
+                        if self.townhalls.closer_than(3, enemy6th) and self.townhalls.amount < 15 and not self.townhalls.closer_than(3, enemy5th) and not enemy_townhalls.closer_than(3, enemy5th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy5th).build(UnitTypeId.HATCHERY, enemy5th)
         if (
             self.can_afford(UnitTypeId.HATCHERY)
             and enemy_gas_buildings.amount < 1
@@ -1555,38 +1627,39 @@ class CompetitiveBot(BotAI):
                 or self.supply_cap > 199
                 and self.minerals > 1000
                 ):
-                if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, ourmain).amount < 1:
-                    if self.townhalls.closer_than(3, ourmain):
-                        self.units(UnitTypeId.DRONE).closest_to(ournat).build(UnitTypeId.HATCHERY, ournat)
-                    if self.townhalls.closer_than(3, ournat) and self.townhalls.amount < 3 and self.time > 105 and not enemy_townhalls.closer_than(3, our3rd):
-                        self.units(UnitTypeId.DRONE).closest_to(our3rd).build(UnitTypeId.HATCHERY, our3rd)
-                    if self.townhalls.closer_than(3, our3rd) and self.townhalls.amount < 4 and self.time > 170 and not enemy_townhalls.closer_than(3, our4th):
-                        self.units(UnitTypeId.DRONE).closest_to(our4th).build(UnitTypeId.HATCHERY, our4th)
-                    if self.townhalls.closer_than(3, our4th) and self.townhalls.amount < 5 and self.time > 200 and not enemy_townhalls.closer_than(3, our5th):
-                        self.units(UnitTypeId.DRONE).closest_to(our5th).build(UnitTypeId.HATCHERY, our5th)
-                    if self.townhalls.closer_than(3, our5th) and self.townhalls.amount < 6 and self.time > 230 and not enemy_townhalls.closer_than(3, our6th):
-                        self.units(UnitTypeId.DRONE).closest_to(our6th).build(UnitTypeId.HATCHERY, our6th)
-                    if self.townhalls.closer_than(3, our6th) and self.townhalls.amount < 7 and not enemy_townhalls.closer_than(3, our7th):
-                        self.units(UnitTypeId.DRONE).closest_to(our7th).build(UnitTypeId.HATCHERY, our7th)
-                    if self.townhalls.closer_than(3, our7th) and self.townhalls.amount < 8 and not enemy_townhalls.closer_than(3, our8th):
-                        self.units(UnitTypeId.DRONE).closest_to(our8th).build(UnitTypeId.HATCHERY, our8th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 9 and not enemy_townhalls.closer_than(3, our9th):
-                            self.units(UnitTypeId.DRONE).closest_to(our9th).build(UnitTypeId.HATCHERY, our9th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, our9th) and self.townhalls.amount < 10 and not enemy_townhalls.closer_than(3, enemy9th):
-                            self.units(UnitTypeId.DRONE).closest_to(enemy9th).build(UnitTypeId.HATCHERY, enemy9th)
-                    if self.game_info.map_name == "MoondanceAIE":
-                        if self.townhalls.closer_than(3, enemy9th) and self.townhalls.amount < 11 and not enemy_townhalls.closer_than(3, enemy8th):
-                            self.units(UnitTypeId.DRONE).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
-                    if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 12 and not self.townhalls.closer_than(3, enemy8th) and not enemy_townhalls.closer_than(3, enemy8th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
-                    if self.townhalls.closer_than(3, enemy8th) and self.townhalls.amount < 13 and not self.townhalls.closer_than(3, enemy7th) and not enemy_townhalls.closer_than(3, enemy7th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy7th).build(UnitTypeId.HATCHERY, enemy7th)
-                    if self.townhalls.closer_than(3, enemy7th) and self.townhalls.amount < 14 and not self.townhalls.closer_than(3, enemy6th) and not enemy_townhalls.closer_than(3, enemy6th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy6th).build(UnitTypeId.HATCHERY, enemy6th)
-                    if self.townhalls.closer_than(3, enemy6th) and self.townhalls.amount < 15 and not self.townhalls.closer_than(3, enemy5th) and not enemy_townhalls.closer_than(3, enemy5th):
-                        self.units(UnitTypeId.DRONE).closest_to(enemy5th).build(UnitTypeId.HATCHERY, enemy5th)
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                    if self.enemy_units.not_flying.exclude_type(scouts).closer_than(20, ourmain).amount < 1:
+                        if self.townhalls.closer_than(3, ourmain):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ournat).build(UnitTypeId.HATCHERY, ournat)
+                        if self.townhalls.closer_than(3, ournat) and self.townhalls.amount < 3 and self.time > 105 and not enemy_townhalls.closer_than(3, our3rd):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our3rd).build(UnitTypeId.HATCHERY, our3rd)
+                        if self.townhalls.closer_than(3, our3rd) and self.townhalls.amount < 4 and self.time > 170 and not enemy_townhalls.closer_than(3, our4th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our4th).build(UnitTypeId.HATCHERY, our4th)
+                        if self.townhalls.closer_than(3, our4th) and self.townhalls.amount < 5 and self.time > 200 and not enemy_townhalls.closer_than(3, our5th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our5th).build(UnitTypeId.HATCHERY, our5th)
+                        if self.townhalls.closer_than(3, our5th) and self.townhalls.amount < 6 and self.time > 230 and not enemy_townhalls.closer_than(3, our6th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our6th).build(UnitTypeId.HATCHERY, our6th)
+                        if self.townhalls.closer_than(3, our6th) and self.townhalls.amount < 7 and not enemy_townhalls.closer_than(3, our7th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our7th).build(UnitTypeId.HATCHERY, our7th)
+                        if self.townhalls.closer_than(3, our7th) and self.townhalls.amount < 8 and not enemy_townhalls.closer_than(3, our8th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our8th).build(UnitTypeId.HATCHERY, our8th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 9 and not enemy_townhalls.closer_than(3, our9th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(our9th).build(UnitTypeId.HATCHERY, our9th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, our9th) and self.townhalls.amount < 10 and not enemy_townhalls.closer_than(3, enemy9th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy9th).build(UnitTypeId.HATCHERY, enemy9th)
+                        if self.game_info.map_name == "MoondanceAIE":
+                            if self.townhalls.closer_than(3, enemy9th) and self.townhalls.amount < 11 and not enemy_townhalls.closer_than(3, enemy8th):
+                                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
+                        if self.townhalls.closer_than(3, our8th) and self.townhalls.amount < 12 and not self.townhalls.closer_than(3, enemy8th) and not enemy_townhalls.closer_than(3, enemy8th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy8th).build(UnitTypeId.HATCHERY, enemy8th)
+                        if self.townhalls.closer_than(3, enemy8th) and self.townhalls.amount < 13 and not self.townhalls.closer_than(3, enemy7th) and not enemy_townhalls.closer_than(3, enemy7th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy7th).build(UnitTypeId.HATCHERY, enemy7th)
+                        if self.townhalls.closer_than(3, enemy7th) and self.townhalls.amount < 14 and not self.townhalls.closer_than(3, enemy6th) and not enemy_townhalls.closer_than(3, enemy6th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy6th).build(UnitTypeId.HATCHERY, enemy6th)
+                        if self.townhalls.closer_than(3, enemy6th) and self.townhalls.amount < 15 and not self.townhalls.closer_than(3, enemy5th) and not enemy_townhalls.closer_than(3, enemy5th):
+                            self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(enemy5th).build(UnitTypeId.HATCHERY, enemy5th)
             for hatch in self.townhalls:
                 if self.mineral_field.closer_than(10, hatch).amount < 5:
                     basecount = basecount + 1
@@ -1598,6 +1671,8 @@ class CompetitiveBot(BotAI):
         if not self.units(UnitTypeId.DRONE):
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         for hatch in self.townhalls.ready:
             geysernear = self.vespene_geyser.closer_than(15, hatch).closest_to(hatch)
@@ -1650,7 +1725,9 @@ class CompetitiveBot(BotAI):
                     print(self.time_formatted, self.supply_used, "They got more gas than us, that's not allowed!")
                         
     async def units_value_check(self):
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         ou = self.units.filter(lambda ou: not ou.type_id in (UnitTypeId.EGG, UnitTypeId.DRONE, UnitTypeId.OVERLORD, UnitTypeId.LARVA, UnitTypeId.QUEEN, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE))
 #enemy workers
@@ -1722,6 +1799,8 @@ class CompetitiveBot(BotAI):
         if not self.larva:
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -1852,7 +1931,9 @@ class CompetitiveBot(BotAI):
         airunits = {UnitTypeId.OVERLORD, UnitTypeId.OVERSEER, UnitTypeId.MUTALISK, UnitTypeId.CORRUPTOR, UnitTypeId.BROODLORD, UnitTypeId.MEDIVAC}
         scouts = {UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}
         queens = self.units(UnitTypeId.QUEEN)
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
@@ -1862,6 +1943,12 @@ class CompetitiveBot(BotAI):
                                              and not ae.type_id in (UnitTypeId.EGG, UnitTypeId.LARVA))
         hydras = self.units(UnitTypeId.HYDRALISK)
         stillattacking = False
+        if self.wallqueen:
+            self.wallqueen = queens.find_by_tag(self.wallqueentag)
+
+        if self.wallqueen:
+            self.wallqueen = queens.find_by_tag(self.wallqueentag)
+            queens.remove(self.wallqueen)
         
 #hatchery zonal defense system
 #enemy units near hatcheries
@@ -1907,21 +1994,21 @@ class CompetitiveBot(BotAI):
                     if self.mineral_field.closer_than(10, ourmain):
                         drone.gather(self.mineral_field.closer_than(10, ourmain).furthest_to(drone))
             naw = self.units.filter(lambda naw: naw.type_id == (UnitTypeId.DRONE) and not naw.is_attacking)
-            if self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}).closer_than(8, ourmain):
+            if self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closer_than(8, ourmain):
                     print("enemy worker nearby")
                     print("our non attacking workers =", naw)
                     for drone in naw:
                         print("naw = ", naw)
                         print("our worker pos =", drone.position)
-                        if drone.position.is_closer_than(3, self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}).closer_than(8, ourmain).closest_to(drone)):
+                        if drone.position.is_closer_than(3, self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closer_than(8, ourmain).closest_to(drone)):
                             if drone.health_percentage >= 0.5:
-                                if not drone.order_target == self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}).closer_than(8, ourmain).closest_to(drone).tag:
-                                    drone.attack(self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}).closer_than(8, ourmain).closest_to(drone))
+                                if not drone.order_target == self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closer_than(8, ourmain).closest_to(drone).tag:
+                                    drone.attack(self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closer_than(8, ourmain).closest_to(drone))
                                 print("worker attacking enemy worker")
                             elif drone.health_percentage < 0.5:
                                 if self.mineral_field.closer_than(10, ourmain):
-                                    if not drone.order_target == self.mineral_field.closer_than(10, ourmain).furthest_to(self.enemy_units(scouts).closest_to(drone)).tag:
-                                        drone.gather(self.mineral_field.closer_than(10, ourmain).furthest_to(self.enemy_units(scouts).closest_to(drone)))
+                                    if not drone.order_target == self.mineral_field.closer_than(10, ourmain).furthest_to(self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closest_to(drone)).tag:
+                                        drone.gather(self.mineral_field.closer_than(10, ourmain).furthest_to(self.enemy_units({UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.ZERGLING, UnitTypeId.ZEALOT}).closest_to(drone)))
                                 
         for drone in self.units(UnitTypeId.DRONE):
             if self.time < 30 and self.enemy_units.not_flying.closer_than(10, drone).amount > 2:
@@ -1945,7 +2032,14 @@ class CompetitiveBot(BotAI):
                     drone.attack(self.enemy_units.not_flying.closer_than(10, ourmain).closest_to(drone))
             if drone.is_attacking:
                 if self.enemy_units.not_flying.closer_than(9, ourmain).amount < 1 and self.enemy_structures.not_flying.closer_than(10, ourmain).amount < 1:
-                    drone.gather(self.mineral_field.closest_to(self.townhalls.closest_to(ourmain)))
+                    if drone.is_carrying_resource:
+                        print(self.time_formatted, self.supply_used, "returning res10", drone.is_carrying_resource)
+                        drone.return_resource()
+                        drone.gather(self.mineral_field.closest_to(self.townhalls.closest_to(ourmain)), queue = True)
+                    else:
+                        print(self.time_formatted, self.supply_used, "not returning res10", drone.is_carrying_resource)
+                        drone.gather(self.mineral_field.closest_to(self.townhalls.closest_to(ourmain)))
+
 
 #queens have an attack too
 ##        if enemies_near and queens:
@@ -2013,8 +2107,9 @@ class CompetitiveBot(BotAI):
                         print(self.time_formatted, self.supply_used, "self.totalvalue_on =", self.totalvalue_on)
                 if queen.is_idle:
                     print("queens gotta move away")
-                    queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3))
-                    queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3), queue = True)
+                    if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))):
+                        queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3))
+                        queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3), queue = True)
 
                 if lings:
                     if enemies_near.closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or lings.in_closest_distance_to_group(enemies_near).position.is_closer_than(1, enemies_near.in_closest_distance_to_group(lings)):
@@ -2025,17 +2120,17 @@ class CompetitiveBot(BotAI):
                             queen.weapon_cooldown == 0
                             or queen.weapon_cooldown > 10
                             ):
+                            stillattacking = True
                             if not queen.order_target == enemies_near.closest_to(queen).tag:
                                 queen.attack(enemies_near.closest_to(queen))
                                 queen.attack(enemies_near.closest_to(queen), queue = True)
                                 print("we have more queen attack")
-                                stillattacking = True
                         else:
                             if enemies_near.closest_to(queen).ground_range < 5:
+                                stillattacking = True
                                 if not queen.is_moving:
                                     queen.move(enemies_near.closest_to(queen).position.towards(queen, 5))
                                     queen.move(enemies_near.closest_to(queen).position.towards(queen, 5), queue = True)
-                                    stillattacking = True
                             if queen.is_attacking:
                                 if enemies_near.closest_to(queen).position.is_further_than(17, self.townhalls.closest_to(enemies_near.closest_to(queen))) or queen.position.is_further_than(12, self.townhalls.closest_to(enemies_near.closest_to(queen))):
                                     queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)))
@@ -2051,17 +2146,17 @@ class CompetitiveBot(BotAI):
                             queen.weapon_cooldown == 0
                             or queen.weapon_cooldown > 10
                             ):
+                            stillattacking = True
                             if not queen.order_target == enemies_near.closest_to(queen).tag:
                                 queen.attack(enemies_near.closest_to(queen))
                                 queen.attack(enemies_near.closest_to(queen), queue = True)
                                 print("we have more queen attack")
-                                stillattacking = True
                         else:
                             if enemies_near.closest_to(queen).ground_range < 5:
+                                stillattacking = True
                                 if not queen.is_moving:
                                     queen.move(enemies_near.closest_to(queen).position.towards(queen, 5))
                                     queen.move(enemies_near.closest_to(queen).position.towards(queen, 5), queue = True)
-                                    stillattacking = True
                             if queen.is_attacking:
                                 if enemies_near.closest_to(queen).position.is_further_than(17, self.townhalls.closest_to(enemies_near.closest_to(queen))) or queen.position.is_further_than(12, self.townhalls.closest_to(enemies_near.closest_to(queen))):
                                     queen.move(self.townhalls.closest_to(enemies_near.closest_to(queen)))
@@ -2341,7 +2436,10 @@ class CompetitiveBot(BotAI):
 #if further away then go to attack formation                            
                 for ling in lings:
                     if ling.position.is_further_than(10, enemies_near.closest_to(ling)):
-                        if queens and not self.units(UnitTypeId.ROACH):
+                        if self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
+                            ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3))
+                            ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3), queue = True)
+                        elif queens and not self.units(UnitTypeId.ROACH):
                             if queens.closest_to(enemies_near.closest_to(ling)).is_attacking or stillattacking == True:
                                 if not ling.order_target == enemies_near.closest_to(ling).tag:
                                     ling.attack(enemies_near.closest_to(ling))
@@ -2363,10 +2461,16 @@ class CompetitiveBot(BotAI):
                                     if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3)):
                                         ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
                                         ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                        else:
-                            if not ling.order_target == enemies_near.closest_to(ling).tag:
-                                ling.attack(enemies_near.closest_to(ling))
-                                ling.attack(enemies_near.closest_to(ling), queue = True)
+                        elif not queens:
+                            print(self.time_formatted, self.supply_used, "lings but no queens", self.totalvalue_on)
+                            if not enemies_near.closer_than(enemies_near.closest_to(ling).ground_range + 3, self.structures.closest_to(enemies_near.closest_to(ling))):
+                                if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
+                                    ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                    ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                            else:
+                                if not ling.order_target == enemies_near.closest_to(ling).tag:
+                                    ling.attack(enemies_near.closest_to(ling))
+                                    ling.attack(enemies_near.closest_to(ling), queue = True)
                             
 #if our army value is better then attack else run
                 for ling in lings:
@@ -2374,57 +2478,62 @@ class CompetitiveBot(BotAI):
                         print(ling)
                         if self.townhalls:
                             if (
-                                self.totalvalue_en >= self.totalvalue_on and not enemies_near.closer_than(6, self.townhalls.closest_to(enemies_near.closest_to(ling))) and not self.units(UnitTypeId.QUEEN)
+                                self.totalvalue_en > self.totalvalue_on and not enemies_near.closer_than(6, self.townhalls.closest_to(enemies_near.closest_to(ling))) and not self.units(UnitTypeId.QUEEN)
                                 or self.totalvalue_en > self.totalvalue_on and self.units(UnitTypeId.QUEEN) and not enemies_near.closer_than(6, self.townhalls.closest_to(enemies_near.closest_to(ling)))
                                 ):
                                 print("Enemy has more than lings")
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 0.5
-                                if (
-                                    self.totalvalue_en > self.totalvalue_on and not enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(ling))) and not self.units(UnitTypeId.QUEEN)
-                                    or self.totalvalue_en > self.totalvalue_on and self.units(UnitTypeId.QUEEN)
-                                    ):
-                                    print("Enemy still has more than lings")
-                                    if self.units(UnitTypeId.QUEEN):
-                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                                        print("ling to queen1")
-                                    elif lings.further_than(10, enemies_near.closest_to(ling)):
-                                        ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling))
-                                        ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling), queue = True)
-                                    else:
-                                        if not self.townhalls.amount == enemy_townhalls.amount:
-                                            if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
-                                        if self.townhalls.amount == enemy_townhalls.amount:
-                                            if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
+                                if self.units(UnitTypeId.QUEEN):
+                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                    print("ling to queen1")
+                                elif lings.further_than(10, enemies_near.closest_to(ling)):
+                                    ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling))
+                                    ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling), queue = True)
+                                else:
+                                    if not self.townhalls.amount <= enemy_townhalls.amount:
+                                        if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                            ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                            ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
+                                    if self.townhalls.amount <= enemy_townhalls.amount:
+                                        if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                            ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                            ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 2
 
                             elif (
                                 self.totalvalue_on >= self.totalvalue_en and not queens
-                                or self.totalvalue_on >= self.totalvalue_en and queens or queens and stillattacking == True
+                                or self.totalvalue_on >= self.totalvalue_en and queens
+                                or stillattacking == True
                                 or enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(ling)))
                                 ):
                                 print("ours is more", stillattacking)
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 0.5
-                                if not self.units(UnitTypeId.QUEEN):
+                                if self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
+                                    ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3))
+                                    ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3), queue = True)
+                                elif not self.units(UnitTypeId.QUEEN):
                                     print("but no queen")
-                                    if ling.weapon_cooldown == 0:
-                                        if not ling.order_target == enemies_near.closest_to(ling).tag:
-                                            ling.attack(enemies_near.closest_to(ling))
-                                            ling.attack(enemies_near.closest_to(ling), queue = True)
-                                            print("lwc", ling.weapon_cooldown)
+                                    if not enemies_near.closer_than(enemies_near.closest_to(ling).ground_range + 3, self.structures.closest_to(enemies_near.closest_to(ling))) and not enemies_near.closer_than(2, ling):
+                                        ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                        ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
                                     else:
-                                        if enemies_near.closest_to(ling).ground_range > 2:
-                                            if not ling.is_moving:
-                                                print("lwc and ling surrounding", ling.weapon_cooldown)
-                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
-                                                ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
+                                        if ling.weapon_cooldown == 0:
+                                            print("lings nearest enemy", enemies_near.closest_to(ling).tag)
+                                            if not ling.order_target == enemies_near.closest_to(ling).tag:
+                                                print("lings nearest enemy changing target to", enemies_near.closest_to(ling).tag)
+                                                ling.attack(enemies_near.closest_to(ling))
+                                                ling.attack(enemies_near.closest_to(ling), queue = True)
+                                                print("lwc", ling.weapon_cooldown)
+                                        else:
+                                            if enemies_near.closest_to(ling).ground_range > 2:
+                                                if not ling.is_moving:
+                                                    print("lwc and ling surrounding", ling.weapon_cooldown)
+                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
+                                                    ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                 elif self.units(UnitTypeId.QUEEN) and not roaches:
                                     print("queen and no roach stillattacking?", stillattacking)
                                     if not self.units(UnitTypeId.QUEEN).closest_to(enemies_near.closest_to(ling)).is_attacking and stillattacking == False:
@@ -2494,9 +2603,13 @@ class CompetitiveBot(BotAI):
                 for ling in lings:
                     if not ling.order_target == enemies_structures_near.closest_to(ling).tag:
                         ling.attack(enemies_structures_near.closest_to(ling))
-                            
+#escort the drone
+            if self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)) and not enemies_near and not enemies_structures_near:
+                for ling in lings:
+                    ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3))
+                    ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3), queue = True)
 ##group
-            if not enemies_near and not enemies_structures_near and self.supply_used < 180:
+            if not enemies_near and not enemies_structures_near and self.supply_used < 180 and not self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
                 for ling in lings:
                     if self.townhalls:
                         if self.units(UnitTypeId.ROACH):
@@ -2510,10 +2623,10 @@ class CompetitiveBot(BotAI):
                                 if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
                                     ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
                         else:
-                            if not self.townhalls.amount == enemy_townhalls.amount:
+                            if not self.townhalls.amount <= enemy_townhalls.amount:
                                 if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
                                     ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                            if self.townhalls.amount == enemy_townhalls.amount:
+                            if self.townhalls.amount <= enemy_townhalls.amount:
                                 if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
                                     ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
                         
@@ -2724,7 +2837,10 @@ class CompetitiveBot(BotAI):
 #if further away then go to attack formation                                                            
                 for roach in roaches:
                     if roach.position.is_further_than(10, enemies_near.closest_to(roach)) or roach.is_idle:
-                        if enemy_townhalls.amount < 2 and enemies_near.closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or stillattacking == True:
+                        if self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
+                            roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3))
+                            roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3), queue = True)
+                        elif enemy_townhalls.amount < 2 and enemies_near.closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or stillattacking == True:
                             if not roach.order_target == enemies_near.closest_to(roach).tag:
                                 roach.attack(enemies_near.closest_to(roach))
                         else:
@@ -2737,7 +2853,7 @@ class CompetitiveBot(BotAI):
                     if roach.position.is_closer_than(10, enemies_near.closest_to(roach)):
                         if self.townhalls:
                             if (
-                                self.totalvalue_en > self.totalvalue_on and not enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(roach)))
+                                self.totalvalue_en > self.totalvalue_on and not enemies_near.closer_than(4, self.townhalls.closest_to(enemies_near.closest_to(roach))) and not stillattacking == True
                                 ):
                                 print("nearby enemy value is higher so we run", self.totalvalue_en > self.totalvalue_on)
                                 if roaches.further_than(10, enemies_near.closest_to(roach)):
@@ -2756,7 +2872,9 @@ class CompetitiveBot(BotAI):
                                         roach.move(enemies_near.closest_to(roach).position.towards(roach, 11))
                                 else:
                                     roach.move(enemies_near.closest_to(roach).position.towards(roach, 11))
-                                
+                            elif self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
+                                roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3))
+                                roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3), queue = True)
                             elif (
                                 enemies_near.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(roach)))
                                 or stillattacking == True
@@ -2788,8 +2906,14 @@ class CompetitiveBot(BotAI):
                 for roach in roaches:
                     if not roach.order_target == enemies_structures_near.closest_to(roach).tag:
                         roach.attack(enemies_structures_near.closest_to(roach))
+#escort drone
+            if self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)) and not self.enemy_structures(UnitTypeId.NYDUSCANAL).closer_than(50, ourmain) and not enemies_near and not enemies_structures_near:
+                for roach in roaches:
+                    roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3))
+                    roach.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(roach).position.towards(roach, 3), queue = True)
+                    
 ##group
-            if not enemies_near and not enemies_structures_near and self.supply_used < 180:
+            if not enemies_near and not enemies_structures_near and self.supply_used < 180 and not self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)):
                 print("group?", enemies_near, enemies_structures_near, self.supply_used < 180)
                 for roach in roaches:
                     if self.townhalls:
@@ -3167,6 +3291,8 @@ class CompetitiveBot(BotAI):
         if not self.units(UnitTypeId.DRONE):
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         roachwarren = self.structures(UnitTypeId.ROACHWARREN)
         if (
@@ -3197,6 +3323,8 @@ class CompetitiveBot(BotAI):
         if not self.larva:
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -3289,6 +3417,8 @@ class CompetitiveBot(BotAI):
         if not self.larva:
             return
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         larva = self.larva.random
         enemies_near = Units([], self)
@@ -3379,7 +3509,9 @@ class CompetitiveBot(BotAI):
     async def build_queens(self):
         if not self.townhalls.ready:
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         if (
             self.can_afford(UnitTypeId.QUEEN)
@@ -3393,13 +3525,15 @@ class CompetitiveBot(BotAI):
             if self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) or self.structures(UnitTypeId.EVOLUTIONCHAMBER):
                 self.train(UnitTypeId.QUEEN, 1)
                 
-        if self.enemyworkers < 15 and self.can_afford(UnitTypeId.QUEEN) and self.larva.amount < 1 and self.structures(UnitTypeId.SPAWNINGPOOL).ready:
+        if self.enemyworkers < 15 and self.can_afford(UnitTypeId.QUEEN) and self.larva.amount < 1 and self.structures(UnitTypeId.SPAWNINGPOOL).ready and enemy_townhalls.amount < 2:
             self.train(UnitTypeId.QUEEN, 1)
             
     async def split_queens(self):
         if not self.units(UnitTypeId.QUEEN):
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         queens = self.units(UnitTypeId.QUEEN)
         enemies_near = Units([], self)
@@ -3535,11 +3669,14 @@ class CompetitiveBot(BotAI):
     async def queen_inject(self):
         if not self.units(UnitTypeId.QUEEN):
             return
-        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
+        enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         queens = self.units(UnitTypeId.QUEEN)
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
+        bases = self.townhalls.ready
 #hatchery zonal defense system
 #enemy units near hatcheries
         for hatch in self.townhalls:
@@ -3561,21 +3698,29 @@ class CompetitiveBot(BotAI):
                     )
                 )
 
-        if self.wallqueen in queens:
+        if self.wallqueen:
+            self.wallqueen = queens.find_by_tag(self.wallqueentag)
+
+        if self.wallqueen:
+            self.wallqueen = queens.find_by_tag(self.wallqueentag)
             queens.remove(self.wallqueen)
-            
-        for queen in queens:
-            if self.townhalls.ready:
-                hatch = self.townhalls.ready.closest_to(queen)
-                if (
-                    self.can_cast(UnitTypeId.QUEEN, AbilityId.EFFECT_INJECTLARVA)
-                    and not hatch.has_buff(BuffId.QUEENSPAWNLARVATIMER)
-                    and not queen.is_using_ability(AbilityId.EFFECT_INJECTLARVA)
-                    and not self.already_pending(AbilityId.EFFECT_INJECTLARVA)
-                    and not queen.is_attacking
-                    and not enemies_near.closer_than(17, queen)
-                    ):
-                    queen(AbilityId.EFFECT_INJECTLARVA, hatch)
+        
+
+        if bases:
+            for hatch in bases:
+                if queens.filter(lambda q: q.energy > 25):
+                    for queen in sorted(queens.filter(lambda q: q.energy > 25), key=lambda s: s.distance_to(hatch)):
+                        if (
+                            self.can_cast(UnitTypeId.QUEEN, AbilityId.EFFECT_INJECTLARVA)
+                            and not hatch.has_buff(BuffId.QUEENSPAWNLARVATIMER)
+                            and not queen.is_using_ability(AbilityId.EFFECT_INJECTLARVA)
+                            and not self.already_pending(AbilityId.EFFECT_INJECTLARVA)
+                            and not queen.is_attacking
+                            and not enemies_near.closer_than(10, queen)
+                            ):
+                            print("closest queen injecting")
+                            queen(AbilityId.EFFECT_INJECTLARVA, hatch)
+                            break
                     
         if queens.filter(lambda q: q.energy > 50):
             if self.units.filter(lambda iu: iu.health_max > 125 and iu.health_percentage < 0.4 and not iu.has_buff(BuffId.TRANSFUSION)):
@@ -3600,6 +3745,8 @@ class CompetitiveBot(BotAI):
             return
         
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
@@ -3657,32 +3804,36 @@ class CompetitiveBot(BotAI):
             and not self.structures(UnitTypeId.EVOLUTIONCHAMBER).closer_than(1, Point2(evowall1))
             ):
             if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
-                if self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource):
-                    self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource).closest_to(Point2(evowall1)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall1))
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                    self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(evowall1)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall1))
         print(self.time_formatted, self.supply_used, "our resources for evo 2", self.minerals, self.vespene)
         if (
             self.can_afford(UnitTypeId.EVOLUTIONCHAMBER)
             and self.time > 180
             and self.has_creep(Point2(evowall2))
             and enemy_townhalls.amount > 1
+            and self.structures(UnitTypeId.EVOLUTIONCHAMBER).amount > 0
             and not self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) > 1
             and not self.structures(UnitTypeId.EVOLUTIONCHAMBER).amount > 1
             and not self.structures(UnitTypeId.EVOLUTIONCHAMBER).closer_than(1, Point2(evowall2))
             ):
             if self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) or self.structures(UnitTypeId.EVOLUTIONCHAMBER):
                 if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
-                    self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource).closest_to(Point2(evowall2)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall2))
-                    
+                    if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                        self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(evowall2)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall2))
+        print(self.time_formatted, self.supply_used, "our resources for evo 3", self.minerals, self.vespene)
         if (
             self.can_afford(UnitTypeId.EVOLUTIONCHAMBER)
             and self.time > 180
             and self.has_creep(Point2(roachwarrenwall))
             and enemy_townhalls.amount > 1
+            and self.structures(UnitTypeId.EVOLUTIONCHAMBER).amount > 1
             and not self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) > 2
             and not roachwarren.closer_than(3, roachwarrenwall)
             ):
             if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
-                self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(roachwarrenwall))
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                    self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(roachwarrenwall))
 
 
     async def build_tech(self):
@@ -3690,6 +3841,8 @@ class CompetitiveBot(BotAI):
             return
         
         enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR}).ready
+        if self.enemy_structures(UnitTypeId.EXTRACTOR):
+            enemy_gas_buildings = self.enemy_structures.same_tech({UnitTypeId.EXTRACTOR, UnitTypeId.REFINERY, UnitTypeId.ASSIMILATOR})
         enemy_townhalls = self.enemy_structures.same_tech({UnitTypeId.COMMANDCENTER, UnitTypeId.HATCHERY, UnitTypeId.NEXUS})
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
