@@ -2596,10 +2596,11 @@ class CompetitiveBot(BotAI):
                                     ling.attack(enemies_near.closest_to(ling), queue = True)
                                     print("queen and no roach stillattacking?", stillattacking)
                             else:
-                                if not ling.order_target == self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3).position:
-                                    print("queens not attacking and stillattacking is not true")
-                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
+                                    if not ling.order_target == self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3).position:
+                                        print("queens not attacking and stillattacking is not true")
+                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
                         elif self.units(UnitTypeId.ROACH) and queens:
                             if self.units(UnitTypeId.ROACH).closest_to(enemies_near.closest_to(ling)).is_attacking or queens.closest_to(enemies_near.closest_to(ling)).is_attacking or stillattacking == True:
                                 if not ling.order_target == enemies_near.closest_to(ling).tag:
@@ -2635,21 +2636,24 @@ class CompetitiveBot(BotAI):
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 0.5
                                 if self.units(UnitTypeId.QUEEN):
-                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                    ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                                    print("ling to queen1")
+                                    if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
+                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                        print("ling to queen1")
                                 elif lings.further_than(10, enemies_near.closest_to(ling)):
                                     ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling))
                                     ling.move(lings.further_than(10, enemies_near.closest_to(ling)).closest_to(ling), queue = True)
                                 else:
-                                    if not self.townhalls.amount <= enemy_townhalls.amount:
-                                        if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                            ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                                            ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
-                                    if self.townhalls.amount <= enemy_townhalls.amount:
-                                        if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                            ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                                            ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
+                                    if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                        if not self.townhalls.amount <= enemy_townhalls.amount:
+                                            if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
+                                    if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                        if self.townhalls.amount <= enemy_townhalls.amount:
+                                            if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3), queue = True)
                                 if ling.position.is_closer_than(enemies_near.closest_to(ling).ground_range, enemies_near.closest_to(ling)):
                                     self.totalvalue_en = self.totalvalue_en * 2
 
@@ -2667,9 +2671,10 @@ class CompetitiveBot(BotAI):
                                     ling.attack(self.units(UnitTypeId.DRONE).filter(lambda d: d.is_using_ability(AbilityId.ZERGBUILD_HATCHERY)).closest_to(ling).position.towards(ling, 3), queue = True)
                                 elif not self.units(UnitTypeId.QUEEN):
                                     print("but no queen")
-                                    if not enemies_near.closer_than(enemies_near.closest_to(ling).ground_range + 3, self.structures.closest_to(enemies_near.closest_to(ling))) and not enemies_near.closer_than(2, ling):
-                                        ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                        ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                    if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
+                                        if not enemies_near.closer_than(enemies_near.closest_to(ling).ground_range + 3, self.structures.closest_to(enemies_near.closest_to(ling))) and not enemies_near.closer_than(2, ling):
+                                            ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                            ling.move(self.townhalls.closest_to(ourmain).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
                                     else:
                                         if ling.weapon_cooldown == 0:
                                             print("lings nearest enemy", enemies_near.closest_to(ling).tag)
@@ -2687,10 +2692,11 @@ class CompetitiveBot(BotAI):
                                 elif self.units(UnitTypeId.QUEEN) and not roaches:
                                     print("queen and no roach stillattacking?", stillattacking)
                                     if not self.units(UnitTypeId.QUEEN).closest_to(enemies_near.closest_to(ling)).is_attacking and stillattacking == False:
-                                        if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3)):
-                                            ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                            ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                                            print("queen but not attacking", stillattacking)
+                                        if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
+                                            if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                                print("queen but not attacking", stillattacking)
                                     elif queens.closest_to(enemies_near.closest_to(ling)).is_attacking or stillattacking == True:
                                         if enemies_near.filter(lambda u: not u.type_id in [UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE]).closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) and stillattacking == True:
                                             if ling.weapon_cooldown == 0:
@@ -2705,7 +2711,8 @@ class CompetitiveBot(BotAI):
                                                         ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
                                                         ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
                                         elif enemies_near.filter(lambda u: u.type_id in [UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE]).closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position):
-                                                print("lwc2", ling.weapon_cooldown)
+                                            print("lwc2", ling.weapon_cooldown)
+                                            if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):
                                                 ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
                                                 ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
                                         elif enemies_near.filter(lambda u: not u.type_id in [UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE, UnitTypeId.MULE]).closer_than(10, self.townhalls.ready.in_closest_distance_to_group(enemies_near).position) or stillattacking == True:
@@ -2720,16 +2727,20 @@ class CompetitiveBot(BotAI):
                                                         print("lwc and ling surrounding", ling.weapon_cooldown)
                                                         ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))))
                                                         ling.move(enemies_near.furthest_to(lings.closest_to(self.townhalls.in_closest_distance_to_group(enemies_near))), queue = True)
-                                            
-                                    elif not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3)):
-                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
-                                        ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                                        print("ling to queen3", stillattacking)
-                                    else:
-                                        if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3)):
+                                    elif self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))):                                            
+                                        if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(queen)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(queen))).furthest_to(enemynat), 3)):
                                             ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
                                             ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
-                                        print("ling to queen3", stillattacking)
+                                            print("ling to queen3", stillattacking)
+                                        else:
+                                            if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3)):
+                                                ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3))
+                                                ling.move(self.townhalls.closest_to(enemies_near.closest_to(ling)).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemies_near.closest_to(ling))).furthest_to(enemynat), 3), queue = True)
+                                                print("ling to queen3", stillattacking)
+                                    else:
+                                        if self.townhalls:
+                                            ling.move(self.townhalls.position.towards(closest_to(enemymain), 3))
+                                            ling.move(self.townhalls.position.towards(closest_to(enemymain), 3), queue = True)
                                 elif roaches and queens:
                                     if roaches.closest_to(enemies_near.closest_to(ling)).is_attacking or queens.closest_to(enemies_near.closest_to(ling)).is_attacking or stillattacking == True:
                                         if ling.weapon_cooldown == 0:
@@ -2767,18 +2778,22 @@ class CompetitiveBot(BotAI):
                                 ling.move(self.units(UnitTypeId.ROACH).closest_to(ling))
                         elif self.units(UnitTypeId.QUEEN):
                             if not self.townhalls.amount == enemy_townhalls.amount:
-                                if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                    ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                    if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                        ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3))
                             if self.townhalls.amount == enemy_townhalls.amount:
-                                if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                    ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                    if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                        ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
                         else:
                             if not self.townhalls.amount <= enemy_townhalls.amount:
-                                if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                    ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                if self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)):
+                                    if not ling.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                        ling.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3))
                             if self.townhalls.amount <= enemy_townhalls.amount:
-                                if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                    ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                                if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                    if not ling.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                        ling.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
                         
 ##attack
             if (
@@ -3069,12 +3084,14 @@ class CompetitiveBot(BotAI):
                     print("group?", enemies_near, enemies_structures_near, self.supply_used < 180)
                     for roach in roaches:
                         if self.townhalls:
-                            if not self.townhalls.amount == enemy_townhalls.amount and not roach.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                if not roach.order_target == self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3).position:
-                                    roach.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
-                            if self.townhalls.amount == enemy_townhalls.amount and not roach.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
-                                if not roach.order_target == self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3).position:
-                                    roach.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                            if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                if not self.townhalls.amount == enemy_townhalls.amount and not roach.position.is_closer_than(5, self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                    if not roach.order_target == self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(enemynat)).furthest_to(enemynat), 3).position:
+                                        roach.move(self.townhalls.ready.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
+                            if self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)):
+                                if self.townhalls.amount == enemy_townhalls.amount and not roach.position.is_closer_than(5, self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3)):
+                                    if not roach.order_target == self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3).position:
+                                        roach.move(self.townhalls.closest_to(enemynat).position.towards(self.mineral_field.closer_than(10, self.townhalls.closest_to(enemynat)).furthest_to(enemynat), 3))
                         print(self.time_formatted, self.supply_used, "unit group, our units total =", self.totalvalue_o)
                         print(self.time_formatted, self.supply_used, "unit group, enemy units total =", self.totalvalue_e)
 ##attack
