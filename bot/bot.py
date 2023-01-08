@@ -112,6 +112,14 @@ class CompetitiveBot(BotAI):
         o2p = False
         global o3p
         o3p = False
+        global o4p
+        o4p = False
+        global o5p
+        o5p = False
+        global o6p
+        o6p = False
+        global o7p
+        o7p = False
         global ourmain
         global ournat
         global our3rd
@@ -167,14 +175,22 @@ class CompetitiveBot(BotAI):
                 o1p = (58, 150)
                 o2p = (12, 94)
                 o3p = (56, 94)
+                o4p = (97, 14)
+                o5p = (91, 27)
+                o6p = (101, 42)
+                o7p = (139, 62)
             else:
                 roachwarrenwall = (35.5, 102.5)
                 evowall1 = (38.5, 104.5)
                 evowall2 = (33.5, 98.5)
                 wql = (34.2, 100.5)
                 o1p = (95, 9)
-                o2p = (62, 139)
+                o2p = (139, 62)
                 o3p = (96, 62)
+                o4p = (53, 144)
+                o5p = (60, 130)
+                o6p = (50, 115)
+                o7p = (12, 94)
                 
         if self.game_info.map_name == "Hardwire AIE":
             print(self.game_info.map_name)
@@ -203,6 +219,10 @@ class CompetitiveBot(BotAI):
                 o1p = (44, 80)
                 o2p = (95, 38)
                 o3p = (96, 76)
+                o4p = (162, 134)
+                o5p = (152, 134)
+                o6p = (139, 147)
+                o7p = (119, 185)
             else:
                 roachwarrenwall = (90.5, 51.5)
                 evowall1 = (87.5, 53.5)
@@ -211,6 +231,10 @@ class CompetitiveBot(BotAI):
                 o1p = (170, 140)
                 o2p = (119, 185)
                 o3p = (120, 140)
+                o4p = (53, 82)
+                o5p = (63, 82)
+                o6p = (76, 70)
+                o7p = (95, 38)
                 
         if self.game_info.map_name == "Inside and OutAIE":
             print(self.game_info.map_name)
@@ -239,6 +263,10 @@ class CompetitiveBot(BotAI):
                 o1p = (18, 54)
                 o2p = (75, 13)
                 o3p = (62, 60)
+                o4p = (132, 107)
+                o5p = (120, 107)
+                o6p = (110, 115)
+                o7p = (84, 150)
             else:
                 roachwarrenwall = (65.5, 34.5)
                 evowall1 = (62.5, 36.5)
@@ -247,7 +275,11 @@ class CompetitiveBot(BotAI):
                 o1p = (142, 107)
                 o2p = (84, 150)
                 o3p = (98, 100)
-            
+                o4p = (28, 53)
+                o5p = (40, 53)
+                o6p = (50, 45)
+                o7p = (75, 13)
+                
         if self.game_info.map_name == "MoondanceAIE":
             print(self.game_info.map_name)
             ourmain = possible_base_locations[-1]
@@ -277,6 +309,10 @@ class CompetitiveBot(BotAI):
                 o1p = (96, 177)
                 o2p = (39, 139)
                 o3p = (68, 112)
+                o4p = (99, 36)
+                o5p = (99, 48)
+                o6p = (115, 60)
+                o7p = (154, 84)
             else:
                 roachwarrenwall = (60.5, 128.5)
                 evowall1 = (65.5, 132.5)
@@ -285,6 +321,10 @@ class CompetitiveBot(BotAI):
                 o1p = (97, 30)
                 o2p = (154, 84)
                 o3p = (124, 92)
+                o4p = (93, 168)
+                o5p = (93, 156)
+                o6p = (77, 144)
+                o7p = (39, 139)
             
         if self.game_info.map_name == "StargazersAIE":
             print(self.game_info.map_name)
@@ -313,6 +353,10 @@ class CompetitiveBot(BotAI):
                 o1p = (136, 145)
                 o2p = (172, 82)
                 o3p = (124, 106)
+                o4p = (87, 136)
+                o5p = (87, 124)
+                o6p = (57, 110)
+                o7p = (27, 83)
             else:
                 roachwarrenwall = (153.5, 94.5)
                 evowall1 = (150.5, 96.5)
@@ -321,6 +365,10 @@ class CompetitiveBot(BotAI):
                 o1p = (62, 145)
                 o2p = (27, 83)
                 o3p = (76, 106)
+                o4p = (113, 136)
+                o5p = (113, 124)
+                o6p = (143, 110)
+                o6p = (172, 82)
             
         if self.game_info.map_name == "WaterfallAIE":
             print(self.game_info.map_name)
@@ -349,6 +397,10 @@ class CompetitiveBot(BotAI):
                 o1p = (17, 47)
                 o2p = (69, 14)
                 o3p = (62.5, 59.5)
+                o4p = (117, 107)
+                o5p = (105, 107)
+                o6p = (94, 117)
+                o7p = (74, 144)
             else:
                 roachwarrenwall = (61.5, 30.5)
                 evowall1 = (58.5, 31.5)
@@ -357,7 +409,11 @@ class CompetitiveBot(BotAI):
                 o1p = (126, 111)
                 o2p = (74, 144)
                 o3p = (81.5, 97.5)
-            
+                o4p = (27, 49)
+                o5p = (39, 49)
+                o6p = (50, 39)
+                o7p = (69, 14)
+                
         print("possible base locations for this map =", possible_base_locations)
         global scouts
         scouts = {UnitTypeId.DRONE, UnitTypeId.SCV, UnitTypeId.PROBE}
@@ -695,7 +751,7 @@ class CompetitiveBot(BotAI):
                                                     ):
                                                     if (
                                                         self.supply_left > self.townhalls.ready.amount * 6
-                                                        or self.already_pending(UnitTypeId.OVERLORD) >= self.townhalls.amount
+                                                        or self.already_pending(UnitTypeId.OVERLORD) >= self.townhalls.ready.amount
                                                         and not self.supply_left == 0
                                                         ):
                                                         larva.train(UnitTypeId.DRONE)
@@ -939,6 +995,7 @@ class CompetitiveBot(BotAI):
         enemies_near = Units([], self)
         enemies_structures_near = Units([], self)
         changeling = self.units.filter(lambda c: c.type_id in (UnitTypeId.CHANGELING, UnitTypeId.CHANGELINGZEALOT, UnitTypeId.CHANGELINGMARINESHIELD, UnitTypeId.CHANGELINGMARINE, UnitTypeId.CHANGELINGZERGLINGWINGS, UnitTypeId.CHANGELINGZERGLING))
+        overlords = self.units(UnitTypeId.OVERLORD)
         
 #hatchery zonal defense system
 #enemy units near hatcheries
@@ -966,12 +1023,17 @@ class CompetitiveBot(BotAI):
             return
 
 #overlord 1
-        if not self.overlord1 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord3:
+        print("ovi amount1", overlords.amount)
+        if not self.overlord1 and overlords.amount > 1 and self.overlord3:
             self.overlord1tag = self.overlord3tag
             self.overlord1 = self.overlord3
             self.overlord3 = False
+            if self.overlord1 in overlords:
+                overlords.remove(self.overlord1)
         if self.overlord1tag:
             self.overlord1 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord1tag)
+            if self.overlord1 in overlords:
+                overlords.remove(self.overlord1)
         if self.overlord1 and self.time > 210:
             self.overlord1.move(Point2(o1p))
             
@@ -979,14 +1041,19 @@ class CompetitiveBot(BotAI):
             self.overlord1.build(UnitTypeId.OVERSEER)
             
 #overlord 2
-        if not self.overlord2 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord3:
+        print("ovi amount2", overlords.amount)
+        if not self.overlord2 and overlords.amount > 1 and self.overlord3:
             self.overlord2tag = self.overlord3tag
             self.overlord2 = self.overlord3
             self.overlord3 = False
+            if self.overlord2 in overlords:
+                overlords.remove(self.overlord2)
         if self.units(UnitTypeId.OVERLORD).amount == 2:
-            self.overlord2tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord2tag = overlords.closest_to(ourmain).tag
         if self.overlord2tag:
             self.overlord2 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord2tag)
+            if self.overlord2 in overlords:
+                overlords.remove(self.overlord2)
         if self.overlord2:
             if (
                 enemy_townhalls.amount > 1
@@ -1021,11 +1088,11 @@ class CompetitiveBot(BotAI):
             if enemy_gas_buildings.amount < 1 or scouted == False:
                 if self.overlord1:
                     self.overlord1.move(enemymain.position.towards(enemynat, -4.5))
-                    self.overlord1.move(enemymain.position.towards(enemynat, -35), queue = True)
+                    self.overlord1.move(Point2(o1p), queue = True)
                     scouted == True
                 if self.overlord2:
                     self.overlord2.move(enemynat.position.towards(enemymain, -4.5))
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24), queue = True)
+                    self.overlord2.move(Point2(o2p), queue = True)
                     scouted == True
                 print(self.time_formatted, self.supply_used, "Overlord scout initiated 3:00")
         if (
@@ -1036,307 +1103,341 @@ class CompetitiveBot(BotAI):
             if enemy_gas_buildings.amount > 0:
                 if self.overlord1:
                     self.overlord1.move(enemymain.position.towards(enemynat, -4.5))
-                    self.overlord1.move(enemymain.position.towards(enemynat, -35), queue = True)
+                    self.overlord1.move(Point2(o1p), queue = True)
                     scouted == True
                 if self.overlord2:
                     self.overlord2.move(enemynat.position.towards(enemymain, -4.5))
-                    self.overlord2.move(enemynat.position.towards(enemymain, -24), queue = True)
+                    self.overlord2.move(Point2(o2p), queue = True)
                     scouted == True
                     print(self.time_formatted, self.supply_used, "Overlord scout initiated 2:45")
 
             
 #overlord 3        
-        if not self.overlord3 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord4:
+        print("ovi amount3", overlords.amount)
+        if not self.overlord3 and overlords.amount > 1 and self.overlord4:
             self.overlord3tag = self.overlord4tag
             self.overlord3 = self.overlord4
             self.overlord4 = False
+            if self.overlord3 in overlords:
+                overlords.remove(self.overlord3)
         if self.units(UnitTypeId.OVERLORD).amount == 3:
-            self.overlord3tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord3tag = overlords.closest_to(ourmain).tag
         if self.overlord3tag:
             self.overlord3 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord3tag)
+            if self.overlord3 in overlords:
+                overlords.remove(self.overlord3)
         if self.overlord3:
-            self.overlord3.move(Point2(o3p))
+            if not self.overlord3.position.is_closer_than(5, Point2(o3p)):
+                self.overlord3.move(Point2(o3p))
             
         if self.overlord3 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 3 and self.structures(UnitTypeId.LAIR).ready:
             self.overlord3.build(UnitTypeId.OVERSEER)
             
 #overlord 4
-        if not self.overlord4 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord5:
+        print("ovi amount4", overlords.amount)
+        if not self.overlord4 and overlords.amount > 1 and self.overlord5:
             self.overlord4tag = self.overlord5tag
             self.overlord4 = self.overlord5
             self.overlord5 = False
+            if self.overlord4 in overlords:
+                overlords.remove(self.overlord4)
         if self.units(UnitTypeId.OVERLORD).amount == 4:
-            self.overlord4tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord4tag = overlords.closest_to(ourmain).tag
         if self.overlord4tag:
             self.overlord4 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord4tag)
-        if self.overlord4 and not enemy_townhalls.closer_than(4, enemy3rd):
-            self.overlord4.move(enemy3rd.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy3rd):
-            self.overlord4.move(enemy4th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy4th):
-            self.overlord4.move(enemy5th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy5th):
-            self.overlord4.move(enemy6th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy6th):
-            self.overlord4.move(enemy7th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord4.move(enemy8th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord4.move(our8th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord4.move(our7th.position.towards(ournat, 15))
-        elif self.overlord4 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord4.move(our6th.position.towards(ournat, 15))
+            if self.overlord4 in overlords:
+                overlords.remove(self.overlord4)
+        if self.overlord4:
+            if not self.overlord4.position.is_closer_than(5, Point2(o4p)):
+                self.overlord4.move(Point2(o4p))
             
         if self.overlord4 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 4 and self.structures(UnitTypeId.LAIR).ready:
             self.overlord4.build(UnitTypeId.OVERSEER)
             
 #overlord 5
-        if not self.overlord5 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord6:
+        print("ovi amount5", overlords.amount)
+        if not self.overlord5 and overlords.amount > 1 and self.overlord6:
             self.overlord5tag = self.overlord6tag
             self.overlord5 = self.overlord6
             self.overlord6 = False
+            if self.overlord5 in overlords:
+                overlords.remove(self.overlord5)
         if self.units(UnitTypeId.OVERLORD).amount == 5:
-            self.overlord5tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord5tag = overlords.closest_to(ourmain).tag
         if self.overlord5tag:
             self.overlord5 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord5tag)
-        if self.overlord5 and not enemy_townhalls.closer_than(4, enemy4th):
-            self.overlord5.move(enemy4th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, enemy4th):
-            self.overlord5.move(enemy5th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, enemy5th):
-            self.overlord5.move(enemy6th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, enemy6th):
-            self.overlord5.move(enemy7th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord5.move(enemy8th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord5.move(our8th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord5.move(our7th.position.towards(ournat, 10))
-        elif self.overlord5 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord5.move(our6th.position.towards(ournat, 10))
+            if self.overlord5 in overlords:
+                overlords.remove(self.overlord5)
+        if self.overlord5:
+            if not self.overlord5.position.is_closer_than(5, Point2(o5p)):
+                self.overlord5.move(Point2(o5p))
             
         if self.overlord5 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 5 and self.structures(UnitTypeId.LAIR).ready:
-            self.overlord5.build(UnitTypeId.OVERSEER)
+                self.overlord5.build(UnitTypeId.OVERSEER)
                                 
 #overlord 6
-        if not self.overlord6 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord7:
+        print("ovi amount6", overlords.amount)
+        if not self.overlord6 and overlords.amount > 1 and self.overlord7:
             self.overlord6tag = self.overlord7tag
             self.overlord6 = self.overlord7
             self.overlord7 = False
+            if self.overlord6 in overlords:
+                overlords.remove(self.overlord6)
         if self.units(UnitTypeId.OVERLORD).amount == 6:
-            self.overlord6tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord6tag = overlords.closest_to(ourmain).tag
         if self.overlord6tag:
             self.overlord6 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord6tag)
-        if self.overlord6 and not enemy_townhalls.closer_than(4, enemy5th):
-            self.overlord6.move(enemy5th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, enemy5th):
-            self.overlord6.move(enemy6th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, enemy6th):
-            self.overlord6.move(enemy7th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord6.move(enemy8th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord6.move(our8th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord6.move(our7th.position.towards(ournat, 10))
-        elif self.overlord6 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord6.move(our6th.position.towards(ournat, 10))
+            if self.overlord6 in overlords:
+                overlords.remove(self.overlord6)
+        if self.overlord6:
+            if not self.overlord6.position.is_closer_than(5, Point2(o6p)):
+                self.overlord6.move(Point2(o6p))
             
 #overlord 7            
-        if not self.overlord7 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord8:
+        print("ovi amount7", overlords.amount)
+        if not self.overlord7 and overlords.amount > 1 and self.overlord8:
             self.overlord7tag = self.overlord8tag
             self.overlord7 = self.overlord8
             self.overlord8 = False
+            if self.overlord7 in overlords:
+                overlords.remove(self.overlord7)
         if self.units(UnitTypeId.OVERLORD).amount == 7:
-            self.overlord7tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord7tag = overlords.closest_to(ourmain).tag
         if self.overlord7tag:
             self.overlord7 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord7tag)
-        if self.overlord7 and not enemy_townhalls.closer_than(4, enemy6th):
-            self.overlord7.move(enemy6th.position.towards(ournat, 10))
-        elif self.overlord7 and enemy_townhalls.closer_than(4, enemy6th):
-            self.overlord7.move(enemy7th.position.towards(ournat, 10))
-        elif self.overlord7 and enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord7.move(enemy8th.position.towards(ournat, 10))
-        elif self.overlord7 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord7.move(our8th.position.towards(ournat, 10))
-        elif self.overlord7 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord7.move(our7th.position.towards(ournat, 10))
-        elif self.overlord7 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord7.move(our6th.position.towards(ournat, 10))
+            if self.overlord7 in overlords:
+                overlords.remove(self.overlord7)
+        if self.overlord7:
+            if not self.overlord7.position.is_closer_than(5, Point2(o7p)):
+                self.overlord7.move(Point2(o7p))
 
 #overlord 8            
-        if not self.overlord8 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord9:
+        print("ovi amount8", overlords.amount)
+        if not self.overlord8 and overlords.amount > 1 and self.overlord9:
             self.overlord8tag = self.overlord9tag
             self.overlord8 = self.overlord9
             self.overlord9 = False
+            if self.overlord8 in overlords:
+                overlords.remove(self.overlord8)
         if self.units(UnitTypeId.OVERLORD).amount == 8:
-            self.overlord8tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord8tag = overlords.closest_to(ourmain).tag
         if self.overlord8tag:
             self.overlord8 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord8tag)
-        if self.overlord8 and not enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord8.move(enemy7th.position.towards(ournat, 10))
-        elif self.overlord8 and enemy_townhalls.closer_than(4, enemy7th):
-            self.overlord8.move(enemy8th.position.towards(ournat, 10))
-        elif self.overlord8 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord8.move(our8th.position.towards(ournat, 10))
-        elif self.overlord8 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord8.move(our7th.position.towards(ournat, 10))
-        elif self.overlord8 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord8.move(our6th.position.towards(enemynat, 10))
+            if self.overlord8 in overlords:
+                overlords.remove(self.overlord8)
+        if self.overlord8:
+            if not self.overlord8.position.is_closer_than(5, ourmain):
+                self.overlord8.move(ourmain)
 
 #overlord 9            
-        if not self.overlord9 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord10:
+        print("ovi amount9", overlords.amount)
+        if not self.overlord9 and overlords.amount > 1 and self.overlord10:
             self.overlord9tag = self.overlord10tag
             self.overlord9 = self.overlord10
             self.overlord10 = False
+            if self.overlord9 in overlords:
+                overlords.remove(self.overlord9)
         if self.units(UnitTypeId.OVERLORD).amount == 9:
-            self.overlord9tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord9tag = overlords.closest_to(ourmain).tag
         if self.overlord9tag:
             self.overlord9 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord9tag)
-        if self.overlord9 and not enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord9.move(enemy8th.position.towards(ourmain, 10))
-        elif self.overlord9 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord9.move(our8th.position.towards(our6th, 10))
-        elif self.overlord9 and enemy_townhalls.closer_than(4, our8th):
-            self.overlord9.move(our7th.position.towards(our3rd, 10))
-        elif self.overlord9 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord9.move(our6th.position.towards(ournat, 10))
+            if self.overlord9 in overlords:
+                overlords.remove(self.overlord9)
+        if self.overlord9:
+            if not self.overlord9.position.is_closer_than(5, ourmain):
+                self.overlord9.move(ourmain)
 
 #overlord 10            
-        if not self.overlord10 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord11:
+        print("ovi amount10", overlords.amount)
+        if not self.overlord10 and overlords.amount > 1 and self.overlord11:
             self.overlord10tag = self.overlord11tag
             self.overlord10 = self.overlord11
             self.overlord11 = False
+            if self.overlord10 in overlords:
+                overlords.remove(self.overlord10)
         if self.units(UnitTypeId.OVERLORD).amount == 10:
-            self.overlord10tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord10tag = overlords.closest_to(ourmain).tag
         if self.overlord10tag:
             self.overlord10 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord10tag)
-        if self.overlord10 and not enemy_townhalls.closer_than(4, our7th):
-            self.overlord10.move(our7th.position.towards(ourmain, 10))
-        elif self.overlord10 and enemy_townhalls.closer_than(4, our7th):
-            self.overlord10.move(ournat.position.towards(our6th, 10))
-        elif self.overlord10 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord10.move(ourmain.position.towards(our6th, 10))
+            if self.overlord10 in overlords:
+                overlords.remove(self.overlord10)
+        if self.overlord10:
+            if not self.overlord10.position.is_closer_than(5, ourmain):
+                self.overlord10.move(ourmain)
 
 #overlord 11            
-        if not self.overlord11 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord12:
+        print("ovi amount11", overlords.amount)
+        if not self.overlord11 and overlords.amount > 1 and self.overlord12:
             self.overlord11tag = self.overlord12tag
             self.overlord11 = self.overlord12
             self.overlord12 = False
+            if self.overlord11 in overlords:
+                overlords.remove(self.overlord11)
         if self.units(UnitTypeId.OVERLORD).amount == 11:
-            self.overlord11tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord11tag = overlords.closest_to(ourmain).tag
         if self.overlord11tag:
             self.overlord11 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord11tag)
-        if self.overlord11 and not enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord11.move(enemy8th.position.towards(ourmain, 10))
-        elif self.overlord11 and enemy_townhalls.closer_than(4, enemy8th):
-            self.overlord11.move(ourmain.position.towards(our6th, 25))
+            if self.overlord11 in overlords:
+                overlords.remove(self.overlord11)
+        if self.overlord11:
+            if not self.overlord11.position.is_closer_than(5, ourmain):
+                self.overlord11.move(ourmain)
 
 #overlord 12            
-        if not self.overlord12 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord13:
+        print("ovi amount12", overlords.amount)
+        if not self.overlord12 and overlords.amount > 1 and self.overlord13:
             self.overlord12tag = self.overlord13tag
             self.overlord12 = self.overlord13
             self.overlord13 = False
+            if self.overlord12 in overlords:
+                overlords.remove(self.overlord12)
         if self.units(UnitTypeId.OVERLORD).amount == 12:
-            self.overlord12tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord12tag = overlords.closest_to(ourmain).tag
         if self.overlord12tag:
             self.overlord12 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord12tag)
-        if self.overlord12 and not enemy_townhalls.closer_than(4, our5th):
-            self.overlord12.move(ourmain.position.towards(our6th, 20))
+            if self.overlord12 in overlords:
+                overlords.remove(self.overlord12)
+        if self.overlord12:
+            if not self.overlord12.position.is_closer_than(5, ourmain):
+                self.overlord12.move(ourmain)
 
 #overlord 13            
-        if not self.overlord13 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord14:
+        print("ovi amount13", overlords.amount)
+        if not self.overlord13 and overlords.amount > 1 and self.overlord14:
             self.overlord13tag = self.overlord14tag
             self.overlord13 = self.overlord14
             self.overlord14 = False
+            if self.overlord13 in overlords:
+                overlords.remove(self.overlord13)
         if self.units(UnitTypeId.OVERLORD).amount == 13:
-            self.overlord13tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord13tag = overlords.closest_to(ourmain).tag
         if self.overlord13tag:
             self.overlord13 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord13tag)
-        if self.overlord13 and not enemy_townhalls.closer_than(4, our4th):
-            self.overlord13.move(ourmain.position.towards(our6th, 10))
+            if self.overlord13 in overlords:
+                overlords.remove(self.overlord13)
+        if self.overlord13:
+            if not self.overlord13.position.is_closer_than(5, ourmain):
+                self.overlord13.move(ourmain)
 
 #overlord 14            
-        if not self.overlord14 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord15:
+        print("ovi amount14", overlords.amount)
+        if not self.overlord14 and overlords.amount > 1 and self.overlord15:
             self.overlord14tag = self.overlord15tag
             self.overlord14 = self.overlord15
             self.overlord15 = False
+            if self.overlord14 in overlords:
+                overlords.remove(self.overlord14)
         if self.units(UnitTypeId.OVERLORD).amount == 14:
-            self.overlord14tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord14tag = overlords.closest_to(ourmain).tag
         if self.overlord14tag:
             self.overlord14 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord14tag)
-        if self.overlord14 and not enemy_townhalls.closer_than(4, our6th):
-            self.overlord14.move(ourmain.position.towards(our6th, 10))
+            if self.overlord14 in overlords:
+                overlords.remove(self.overlord14)
+        if self.overlord14:
+            if not self.overlord14.position.is_closer_than(5, ourmain):
+                self.overlord14.move(ourmain)
 
 #overlord 15            
-        if not self.overlord15 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord16:
+        print("ovi amount15", overlords.amount)
+        if not self.overlord15 and overlords.amount > 1 and self.overlord16:
             self.overlord15tag = self.overlord16tag
             self.overlord15 = self.overlord16
             self.overlord16 = False
+            if self.overlord15 in overlords:
+                overlords.remove(self.overlord15)
         if self.units(UnitTypeId.OVERLORD).amount == 15:
-            self.overlord15tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord15tag = overlords.closest_to(ourmain).tag
         if self.overlord15tag:
             self.overlord15 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord15tag)
+            if self.overlord15 in overlords:
+                overlords.remove(self.overlord15)
         if self.overlord15:
-            self.overlord15.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord15.position.is_closer_than(5, ourmain):
+                self.overlord15.move(ourmain)
 
 #overlord 16            
-        if not self.overlord16 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord17:
+        print("ovi amount16", overlords.amount)
+        if not self.overlord16 and overlords.amount > 1 and self.overlord17:
             self.overlord16tag = self.overlord17tag
             self.overlord16 = self.overlord17
             self.overlord17 = False
+            if self.overlord16 in overlords:
+                overlords.remove(self.overlord16)
         if self.units(UnitTypeId.OVERLORD).amount == 16:
-            self.overlord16tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord16tag = overlords.closest_to(ourmain).tag
         if self.overlord16tag:
             self.overlord16 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord16tag)
+            if self.overlord16 in overlords:
+                overlords.remove(self.overlord16)
         if self.overlord16:
-            self.overlord16.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord16.position.is_closer_than(5, ourmain):
+                self.overlord16.move(ourmain)
 
 #overlord 17            
-        if not self.overlord17 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord18:
+        print("ovi amount17", overlords.amount)
+        if not self.overlord17 and overlords.amount > 1 and self.overlord18:
             self.overlord17tag = self.overlord18tag
             self.overlord17 = self.overlord18
             self.overlord18 = False
+            if self.overlord17 in overlords:
+                overlords.remove(self.overlord17)
         if self.units(UnitTypeId.OVERLORD).amount == 17:
-            self.overlord17tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord17tag = overlords.closest_to(ourmain).tag
         if self.overlord17tag:
             self.overlord17 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord17tag)
+            if self.overlord17 in overlords:
+                overlords.remove(self.overlord17)
         if self.overlord17:
-            self.overlord17.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord17.position.is_closer_than(5, ourmain):
+                self.overlord17.move(ourmain)
             
 #overlord 18            
-        if not self.overlord18 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord19:
+        print("ovi amount18", overlords.amount)
+        if not self.overlord18 and overlords.amount > 1 and self.overlord19:
             self.overlord18tag = self.overlord19tag
             self.overlord18 = self.overlord19
             self.overlord19 = False
+            if self.overlord18 in overlords:
+                overlords.remove(self.overlord18)
         if self.units(UnitTypeId.OVERLORD).amount == 18:
-            self.overlord18tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord18tag = overlords.closest_to(ourmain).tag
         if self.overlord18tag:
             self.overlord18 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord18tag)
+            if self.overlord18 in overlords:
+                overlords.remove(self.overlord18)
         if self.overlord18:
-            self.overlord18.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord18.position.is_closer_than(5, ourmain):
+                self.overlord18.move(ourmain)
             
 #overlord 19            
-        if not self.overlord19 and self.units(UnitTypeId.OVERLORD).amount > 1 and self.overlord20:
+        print("ovi amount19", overlords.amount)
+        if not self.overlord19 and overlords.amount > 1 and self.overlord20:
             self.overlord19tag = self.overlord20tag
             self.overlord19 = self.overlord20
             self.overlord20 = False
+            if self.overlord19 in overlords:
+                overlords.remove(self.overlord19)
         if self.units(UnitTypeId.OVERLORD).amount == 19:
-            self.overlord19tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+            self.overlord19tag = overlords.closest_to(ourmain).tag
         if self.overlord19tag:
             self.overlord19 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord19tag)
+            if self.overlord19 in overlords:
+                overlords.remove(self.overlord19)
         if self.overlord19:
-            self.overlord19.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord19.position.is_closer_than(5, ourmain):
+                self.overlord19.move(ourmain)
             
 #overlord 20            
-        if self.units(UnitTypeId.OVERLORD).amount >= 20:
-            self.overlord20tag = self.units(UnitTypeId.OVERLORD).closest_to(ourmain).tag
+        print("ovi amount20", overlords.amount)
+        if self.units(UnitTypeId.OVERLORD).amount == 20:
+            self.overlord20tag = overlords.closest_to(ourmain).tag
         if self.overlord20tag:
             self.overlord20 = self.units(UnitTypeId.OVERLORD).find_by_tag(self.overlord20tag)
+            if self.overlord20 in overlords:
+                overlords.remove(self.overlord20)
         if self.overlord20:
-            self.overlord20.move(ourmain.position.towards(our6th, 10))
+            if not self.overlord20.position.is_closer_than(5, ourmain):
+                self.overlord20.move(ourmain)
 
 #changeling
         if changeling:
@@ -1357,7 +1458,7 @@ class CompetitiveBot(BotAI):
         if self.overseer1tag:
             self.overseer1 = self.units(UnitTypeId.OVERSEER).find_by_tag(self.overseer1tag)
         if self.overseer1 and self.time > 300 and len(self.overseer1.orders) < 1:
-            self.overseer1.move(enemymain.position.towards(enemynat, -35))
+            self.overseer1.move(enemymain.position.towards(Point2(o1p)))
         if self.overseer1 and self.overseer1.energy >= 50:
             self.overseer1.move(enemymain.position.towards(enemynat, -10))
             self.overseer1(AbilityId.SPAWNCHANGELING_SPAWNCHANGELING, queue = True)
@@ -1372,7 +1473,7 @@ class CompetitiveBot(BotAI):
         if self.overseer2tag:
             self.overseer2 = self.units(UnitTypeId.OVERSEER).find_by_tag(self.overseer2tag)
         if self.overseer2 and self.time > 300 and len(self.overseer2.orders) < 1:
-            self.overseer2.move(enemynat.position.towards(enemymain, -24))
+            self.overseer2.move(enemynat.position.towards(Point2(o2p)))
         if self.overseer2 and self.overseer2.energy >= 50:
             self.overseer2.move(enemynat.position.towards(enemymain, -10))
             self.overseer2(AbilityId.SPAWNCHANGELING_SPAWNCHANGELING, queue = True)
@@ -1386,9 +1487,9 @@ class CompetitiveBot(BotAI):
         if self.overseer3tag:
             self.overseer3 = self.units(UnitTypeId.OVERSEER).find_by_tag(self.overseer3tag)
         if self.overseer3 and self.time > 300 and len(self.overseer3.orders) < 1:
-            self.overseer3.move(enemynat.position.towards(ournat, 40))
+            self.overseer3.move(Point2(o3p))
         if self.overseer3 and self.overseer3.energy >= 50:
-            self.overseer3.move(enemynat.position.towards(ournat, 40))
+            self.overseer3.move(Point2(o3p).position.towards(ournat, 5))
             self.overseer3(AbilityId.SPAWNCHANGELING_SPAWNCHANGELING, queue = True)
 
         if self.units(UnitTypeId.OVERSEER).amount == 4:
@@ -1400,11 +1501,17 @@ class CompetitiveBot(BotAI):
         if self.overseer4tag:
             self.overseer4 = self.units(UnitTypeId.OVERSEER).find_by_tag(self.overseer4tag)
         if self.overseer4 and self.time > 300 and len(self.overseer4.orders) < 1:
+            for enemy in sorted(self.enemy_units, key = lambda d: d.distance_to(self.overseer4)):
+                if enemy.is_cloaked:
+                    self.overseer4.move(enemy.closest_to(self.overseer4))
+                    break
             if self.units(UnitTypeId.ROACH):
                 if enemies_near:
                     self.overseer4.move(self.units(UnitTypeId.ROACH).in_closest_distance_to_group(enemies_near))
                 else:
                     self.overseer4.move(self.units(UnitTypeId.ROACH).closest_to(enemymain))
+            elif self.units(UnitTypeId.QUEEN):
+                self.overseer4.move(self.units(UnitTypeId.QUEEN).closest_to(enemymain))
         if self.overseer4 and self.overseer4.energy >= 50:
             self.overseer4(AbilityId.SPAWNCHANGELING_SPAWNCHANGELING)
 
@@ -1486,7 +1593,7 @@ class CompetitiveBot(BotAI):
                 if (
                     self.townhalls.ready.amount > 2
                     and self.supply_used > 49
-                    and self.supply_left <= self.townhalls.ready.amount + self.units(UnitTypeId.QUEEN).amount * 2
+                    and self.supply_left <= self.townhalls.ready.amount * 6
                     and self.already_pending(UnitTypeId.OVERLORD) < self.townhalls.ready.amount
                     and self.can_afford(UnitTypeId.OVERLORD)
                     ):
@@ -3760,6 +3867,8 @@ class CompetitiveBot(BotAI):
             for hatch in bases:
                 if queens.filter(lambda q: q.energy > 25):
                     for queen in sorted(queens.filter(lambda q: q.energy > 25), key = lambda s: s.distance_to(hatch)):
+                        if queens.filter(lambda q: q.energy > 25).closest_to(hatch).is_using_ability(AbilityId.EFFECT_INJECTLARVA):
+                            continue
                         if (
                             self.can_cast(UnitTypeId.QUEEN, AbilityId.EFFECT_INJECTLARVA)
                             and not hatch.has_buff(BuffId.QUEENSPAWNLARVATIMER)
@@ -3842,7 +3951,8 @@ class CompetitiveBot(BotAI):
                 or self.time > 300
                 and enemy_townhalls.amount > 1
                 ):
-                self.units(UnitTypeId.DRONE).filter(lambda drone: drone.is_collecting and not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.ROACHWARREN, Point2(roachwarrenwall))
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                    self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.ROACHWARREN, Point2(roachwarrenwall))
         print(self.time_formatted, self.supply_used, "our resources for evo", self.minerals, self.vespene)
         if (
             self.can_afford(UnitTypeId.EVOLUTIONCHAMBER)
@@ -3855,7 +3965,7 @@ class CompetitiveBot(BotAI):
             ):
             if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
                 if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
-                    self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(evowall1)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall1))
+                    self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource and not drone.is_using_ability(AbilityId.ZERGBUILD_ROACHWARREN)).closest_to(Point2(evowall1)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall1))
         print(self.time_formatted, self.supply_used, "our resources for evo 2", self.minerals, self.vespene)
         if (
             self.can_afford(UnitTypeId.EVOLUTIONCHAMBER)
@@ -3870,7 +3980,7 @@ class CompetitiveBot(BotAI):
             if self.already_pending(UnitTypeId.EVOLUTIONCHAMBER) or self.structures(UnitTypeId.EVOLUTIONCHAMBER):
                 if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
                     if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
-                        self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(evowall2)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall2))
+                        self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource and not drone.is_using_ability(AbilityId.ZERGBUILD_ROACHWARREN)).closest_to(Point2(evowall2)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(evowall2))
         print(self.time_formatted, self.supply_used, "our resources for evo 3", self.minerals, self.vespene)
         if (
             self.can_afford(UnitTypeId.EVOLUTIONCHAMBER)
@@ -3882,7 +3992,7 @@ class CompetitiveBot(BotAI):
             and not roachwarren.closer_than(3, roachwarrenwall)
             ):
             if roachwarren or self.already_pending(UnitTypeId.ROACHWARREN):
-                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource) and not self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_using_ability(AbilityId.ZERGBUILD_ROACHWARREN)):
                     self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(Point2(roachwarrenwall)).build(UnitTypeId.EVOLUTIONCHAMBER, Point2(roachwarrenwall))
 
 
@@ -3950,10 +4060,16 @@ class CompetitiveBot(BotAI):
             if self.enemy_units.flying.filter(lambda flyer: not flyer.type_id in (UnitTypeId.OVERLORD, UnitTypeId.OVERSEER, UnitTypeId.OBSERVER)):
                 if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
                     self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ourmain).build(UnitTypeId.HYDRALISKDEN, ourmain.position.towards(ournat, 7))
+        
+        if self.structures(UnitTypeId.LAIR).ready or self.structures(UnitTypeId.HIVE).ready or self.already_pending(UnitTypeId.HIVE):
+            if self.can_afford(UnitTypeId.SPIRE) and not self.already_pending(UnitTypeId.SPIRE):
+                if self.enemy_units.flying.filter(lambda flyer: not flyer.type_id in (UnitTypeId.OVERLORD, UnitTypeId.OVERSEER, UnitTypeId.OBSERVER)):
+                    if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
+                        self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ourmain).build(UnitTypeId.SPIRE, ourmain.position.towards(Point2(o4p), -9.5))
 
         if self.can_afford(UnitTypeId.INFESTATIONPIT) and self.structures(UnitTypeId.LAIR).ready and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2) > 0.2:
             if self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource):
-                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ourmain).build(UnitTypeId.INFESTATIONPIT, ourmain.position.towards(ournat, 7))
+                self.units(UnitTypeId.DRONE).filter(lambda drone: not drone.is_carrying_resource).closest_to(ourmain).build(UnitTypeId.INFESTATIONPIT, ourmain.position.towards(Point2(o4p), 7))
         
         if self.can_afford(UnitTypeId.HIVE) and self.townhalls.ready and not self.already_pending(UnitTypeId.HIVE) and not self.structures(UnitTypeId.HIVE) and self.already_pending(UpgradeId.ZERGGROUNDARMORSLEVEL2) and self.already_pending(UpgradeId.ZERGMISSILEWEAPONSLEVEL2):
             self.townhalls.closest_to(ourmain).build(UnitTypeId.HIVE)
