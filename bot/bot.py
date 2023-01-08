@@ -368,7 +368,7 @@ class CompetitiveBot(BotAI):
                 o4p = (113, 136)
                 o5p = (113, 124)
                 o6p = (143, 110)
-                o6p = (172, 82)
+                o7p = (172, 82)
             
         if self.game_info.map_name == "WaterfallAIE":
             print(self.game_info.map_name)
@@ -1127,7 +1127,7 @@ class CompetitiveBot(BotAI):
             if self.overlord3 in overlords:
                 overlords.remove(self.overlord3)
         if self.overlord3:
-            if not self.overlord3.position.is_closer_than(5, Point2(o3p)):
+            if not self.overlord3.position.is_closer_than(8, Point2(o3p)):
                 self.overlord3.move(Point2(o3p))
             
         if self.overlord3 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 3 and self.structures(UnitTypeId.LAIR).ready:
@@ -1148,7 +1148,7 @@ class CompetitiveBot(BotAI):
             if self.overlord4 in overlords:
                 overlords.remove(self.overlord4)
         if self.overlord4:
-            if not self.overlord4.position.is_closer_than(5, Point2(o4p)):
+            if not self.overlord4.position.is_closer_than(8, Point2(o4p)):
                 self.overlord4.move(Point2(o4p))
             
         if self.overlord4 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 4 and self.structures(UnitTypeId.LAIR).ready:
@@ -1169,7 +1169,7 @@ class CompetitiveBot(BotAI):
             if self.overlord5 in overlords:
                 overlords.remove(self.overlord5)
         if self.overlord5:
-            if not self.overlord5.position.is_closer_than(5, Point2(o5p)):
+            if not self.overlord5.position.is_closer_than(8, Point2(o5p)):
                 self.overlord5.move(Point2(o5p))
             
         if self.overlord5 and self.can_afford(UnitTypeId.OVERSEER) and self.units(UnitTypeId.OVERSEER).amount + self.already_pending(UnitTypeId.OVERSEER) < 5 and self.structures(UnitTypeId.LAIR).ready:
@@ -1190,7 +1190,7 @@ class CompetitiveBot(BotAI):
             if self.overlord6 in overlords:
                 overlords.remove(self.overlord6)
         if self.overlord6:
-            if not self.overlord6.position.is_closer_than(5, Point2(o6p)):
+            if not self.overlord6.position.is_closer_than(8, Point2(o6p)):
                 self.overlord6.move(Point2(o6p))
             
 #overlord 7            
@@ -1208,7 +1208,7 @@ class CompetitiveBot(BotAI):
             if self.overlord7 in overlords:
                 overlords.remove(self.overlord7)
         if self.overlord7:
-            if not self.overlord7.position.is_closer_than(5, Point2(o7p)):
+            if not self.overlord7.position.is_closer_than(8, Point2(o7p)):
                 self.overlord7.move(Point2(o7p))
 
 #overlord 8            
@@ -1226,7 +1226,7 @@ class CompetitiveBot(BotAI):
             if self.overlord8 in overlords:
                 overlords.remove(self.overlord8)
         if self.overlord8:
-            if not self.overlord8.position.is_closer_than(5, ourmain):
+            if not self.overlord8.position.is_closer_than(8, ourmain):
                 self.overlord8.move(ourmain)
 
 #overlord 9            
@@ -1244,7 +1244,7 @@ class CompetitiveBot(BotAI):
             if self.overlord9 in overlords:
                 overlords.remove(self.overlord9)
         if self.overlord9:
-            if not self.overlord9.position.is_closer_than(5, ourmain):
+            if not self.overlord9.position.is_closer_than(8, ourmain):
                 self.overlord9.move(ourmain)
 
 #overlord 10            
@@ -1262,7 +1262,7 @@ class CompetitiveBot(BotAI):
             if self.overlord10 in overlords:
                 overlords.remove(self.overlord10)
         if self.overlord10:
-            if not self.overlord10.position.is_closer_than(5, ourmain):
+            if not self.overlord10.position.is_closer_than(8, ourmain):
                 self.overlord10.move(ourmain)
 
 #overlord 11            
@@ -1280,7 +1280,7 @@ class CompetitiveBot(BotAI):
             if self.overlord11 in overlords:
                 overlords.remove(self.overlord11)
         if self.overlord11:
-            if not self.overlord11.position.is_closer_than(5, ourmain):
+            if not self.overlord11.position.is_closer_than(8, ourmain):
                 self.overlord11.move(ourmain)
 
 #overlord 12            
@@ -1298,7 +1298,7 @@ class CompetitiveBot(BotAI):
             if self.overlord12 in overlords:
                 overlords.remove(self.overlord12)
         if self.overlord12:
-            if not self.overlord12.position.is_closer_than(5, ourmain):
+            if not self.overlord12.position.is_closer_than(8, ourmain):
                 self.overlord12.move(ourmain)
 
 #overlord 13            
@@ -1316,7 +1316,7 @@ class CompetitiveBot(BotAI):
             if self.overlord13 in overlords:
                 overlords.remove(self.overlord13)
         if self.overlord13:
-            if not self.overlord13.position.is_closer_than(5, ourmain):
+            if not self.overlord13.position.is_closer_than(8, ourmain):
                 self.overlord13.move(ourmain)
 
 #overlord 14            
@@ -1334,7 +1334,7 @@ class CompetitiveBot(BotAI):
             if self.overlord14 in overlords:
                 overlords.remove(self.overlord14)
         if self.overlord14:
-            if not self.overlord14.position.is_closer_than(5, ourmain):
+            if not self.overlord14.position.is_closer_than(8, ourmain):
                 self.overlord14.move(ourmain)
 
 #overlord 15            
@@ -1352,7 +1352,7 @@ class CompetitiveBot(BotAI):
             if self.overlord15 in overlords:
                 overlords.remove(self.overlord15)
         if self.overlord15:
-            if not self.overlord15.position.is_closer_than(5, ourmain):
+            if not self.overlord15.position.is_closer_than(8, ourmain):
                 self.overlord15.move(ourmain)
 
 #overlord 16            
@@ -1370,7 +1370,7 @@ class CompetitiveBot(BotAI):
             if self.overlord16 in overlords:
                 overlords.remove(self.overlord16)
         if self.overlord16:
-            if not self.overlord16.position.is_closer_than(5, ourmain):
+            if not self.overlord16.position.is_closer_than(8, ourmain):
                 self.overlord16.move(ourmain)
 
 #overlord 17            
@@ -1388,7 +1388,7 @@ class CompetitiveBot(BotAI):
             if self.overlord17 in overlords:
                 overlords.remove(self.overlord17)
         if self.overlord17:
-            if not self.overlord17.position.is_closer_than(5, ourmain):
+            if not self.overlord17.position.is_closer_than(8, ourmain):
                 self.overlord17.move(ourmain)
             
 #overlord 18            
@@ -1406,7 +1406,7 @@ class CompetitiveBot(BotAI):
             if self.overlord18 in overlords:
                 overlords.remove(self.overlord18)
         if self.overlord18:
-            if not self.overlord18.position.is_closer_than(5, ourmain):
+            if not self.overlord18.position.is_closer_than(8, ourmain):
                 self.overlord18.move(ourmain)
             
 #overlord 19            
@@ -1424,7 +1424,7 @@ class CompetitiveBot(BotAI):
             if self.overlord19 in overlords:
                 overlords.remove(self.overlord19)
         if self.overlord19:
-            if not self.overlord19.position.is_closer_than(5, ourmain):
+            if not self.overlord19.position.is_closer_than(8, ourmain):
                 self.overlord19.move(ourmain)
             
 #overlord 20            
@@ -1436,7 +1436,7 @@ class CompetitiveBot(BotAI):
             if self.overlord20 in overlords:
                 overlords.remove(self.overlord20)
         if self.overlord20:
-            if not self.overlord20.position.is_closer_than(5, ourmain):
+            if not self.overlord20.position.is_closer_than(8, ourmain):
                 self.overlord20.move(ourmain)
 
 #changeling
@@ -1503,7 +1503,7 @@ class CompetitiveBot(BotAI):
         if self.overseer4 and self.time > 300 and len(self.overseer4.orders) < 1:
             for enemy in sorted(self.enemy_units, key = lambda d: d.distance_to(self.overseer4)):
                 if enemy.is_cloaked:
-                    self.overseer4.move(enemy.closest_to(self.overseer4))
+                    self.overseer4.move(enemy)
                     break
             if self.units(UnitTypeId.ROACH):
                 if enemies_near:
@@ -2435,29 +2435,32 @@ class CompetitiveBot(BotAI):
                                 self.closestling2.move(enemy7th)
                                 self.closestling2.move(enemy8th, queue = True)
                         else:
-                            if not enemy_townhalls.closer_than(5, enemy3rd):
+                            if not enemy_townhalls.closer_than(4, enemy3rd):
                                 self.closestling2.move(enemy3rd)
-                            elif not enemy_townhalls.closer_than(5, enemy4th):
                                 self.closestling2.move(enemy4th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, enemy5th):
+                            elif not enemy_townhalls.closer_than(4, enemy4th):
+                                self.closestling2.move(enemy4th)
                                 self.closestling2.move(enemy5th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, enemy6th):
+                            elif not enemy_townhalls.closer_than(4, enemy5th):
+                                self.closestling2.move(enemy5th)
                                 self.closestling2.move(enemy6th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, enemy7th):
+                            elif not enemy_townhalls.closer_than(4, enemy6th):
+                                self.closestling2.move(enemy6th)
                                 self.closestling2.move(enemy7th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, enemy8th):
+                            elif not enemy_townhalls.closer_than(4, enemy7th):
+                                self.closestling2.move(enemy7th)
                                 self.closestling2.move(enemy8th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, our8th):
-                                self.closestling2.move(our8th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, our7th):
-                                self.closestling2.move(our7th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, our6th):
-                                self.closestling2.move(our6th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, our5th):
-                                self.closestling2.move(our5th, queue = True)
-                            elif not enemy_townhalls.closer_than(5, our4th):
-                                self.closestling2.move(our4th, queue = True)
-                            print(self.time_formatted, self.supply_used, "closest ling 2 scouting")
+                                if not enemy_townhalls.closer_than(5, our8th):
+                                    self.closestling2.move(our8th, queue = True)
+                                if not enemy_townhalls.closer_than(5, our7th):
+                                    self.closestling2.move(our7th, queue = True)
+                                if not enemy_townhalls.closer_than(5, our6th):
+                                    self.closestling2.move(our6th, queue = True)
+                                if not enemy_townhalls.closer_than(5, our5th):
+                                    self.closestling2.move(our5th, queue = True)
+                                if not enemy_townhalls.closer_than(5, our4th):
+                                    self.closestling2.move(our4th, queue = True)
+                        print(self.time_formatted, self.supply_used, "closest ling 2 scouting")
             
         if not self.closestling2:
             if lings:
@@ -2496,28 +2499,31 @@ class CompetitiveBot(BotAI):
                                     self.closestling2.move(enemy7th)
                                     self.closestling2.move(enemy8th, queue = True)
                             else:
-                                if not enemy_townhalls.closer_than(5, enemy3rd):
+                                if not enemy_townhalls.closer_than(4, enemy3rd):
                                     self.closestling2.move(enemy3rd)
-                                elif not enemy_townhalls.closer_than(5, enemy4th):
                                     self.closestling2.move(enemy4th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, enemy5th):
+                                elif not enemy_townhalls.closer_than(4, enemy4th):
+                                    self.closestling2.move(enemy4th)
                                     self.closestling2.move(enemy5th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, enemy6th):
+                                elif not enemy_townhalls.closer_than(4, enemy5th):
+                                    self.closestling2.move(enemy5th)
                                     self.closestling2.move(enemy6th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, enemy7th):
+                                elif not enemy_townhalls.closer_than(4, enemy6th):
+                                    self.closestling2.move(enemy6th)
                                     self.closestling2.move(enemy7th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, enemy8th):
+                                elif not enemy_townhalls.closer_than(4, enemy7th):
+                                    self.closestling2.move(enemy7th)
                                     self.closestling2.move(enemy8th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, our8th):
-                                    self.closestling2.move(our8th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, our7th):
-                                    self.closestling2.move(our7th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, our6th):
-                                    self.closestling2.move(our6th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, our5th):
-                                    self.closestling2.move(our5th, queue = True)
-                                elif not enemy_townhalls.closer_than(5, our4th):
-                                    self.closestling2.move(our4th, queue = True)
+                                    if not enemy_townhalls.closer_than(5, our8th):
+                                        self.closestling2.move(our8th, queue = True)
+                                    if not enemy_townhalls.closer_than(5, our7th):
+                                        self.closestling2.move(our7th, queue = True)
+                                    if not enemy_townhalls.closer_than(5, our6th):
+                                        self.closestling2.move(our6th, queue = True)
+                                    if not enemy_townhalls.closer_than(5, our5th):
+                                        self.closestling2.move(our5th, queue = True)
+                                    if not enemy_townhalls.closer_than(5, our4th):
+                                        self.closestling2.move(our4th, queue = True)
                                 print(self.time_formatted, self.supply_used, "closest ling 2 scouting")
 
 
@@ -4047,7 +4053,7 @@ class CompetitiveBot(BotAI):
                 )
         print(self.time_formatted, self.supply_used, "our resources", self.minerals, self.vespene)
         print(self.time_formatted, self.supply_used, "our lair", self.already_pending(UnitTypeId.LAIR))
-        if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.idle and enemy_townhalls.amount > 1:
+        if self.structures(UnitTypeId.EVOLUTIONCHAMBER).ready.idle and enemy_townhalls.amount > 1 and self.totalvalue_o > self.totalvalue_e:
             if enemy_gas_buildings.amount > enemy_townhalls.amount and self.structures(UnitTypeId.LAIR) or enemy_gas_buildings.amount <= enemy_townhalls.amount:
                 print(self.time_formatted, self.supply_used, "evo ready", self.minerals, self.vespene)
                 
